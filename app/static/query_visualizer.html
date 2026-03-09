@@ -4,19 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAG Flow Visualizer | Gemini AI</title>
+    <title>RAG Query Trace | Gemini AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --accent: #22d3ee;
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --accent: #10b981;
             --bg: #030712;
             --card-bg: rgba(17, 24, 39, 0.8);
             --border: rgba(255, 255, 255, 0.1);
             --text: #f3f4f6;
-            --highlight: #fb7185;
+            --highlight: #f59e0b;
         }
 
         * {
@@ -43,7 +43,7 @@
 
         h1 {
             font-size: 3rem;
-            background: linear-gradient(to right, #818cf8, #c084fc, #fb7185);
+            background: linear-gradient(to right, #a78bfa, #f472b6, #fb923c);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -91,7 +91,7 @@
         input:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
         }
 
         button {
@@ -109,37 +109,6 @@
 
         button:hover {
             transform: scale(1.01);
-        }
-
-        .nav {
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .nav-link {
-            color: #94a3b8;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover {
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .nav-link.active {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
-            font-weight: bold;
         }
 
         .flow-container {
@@ -166,13 +135,13 @@
 
         .step-card:hover {
             transform: translateY(-5px);
-            border-color: var(--accent);
+            border-color: var(--primary);
         }
 
         .step-card.active {
             opacity: 1;
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
         }
 
         .step-icon {
@@ -189,7 +158,7 @@
         .step-title {
             font-weight: 600;
             font-size: 1.1rem;
-            color: var(--accent);
+            color: var(--primary);
         }
 
         .data-display {
@@ -215,8 +184,8 @@
         }
 
         .transformation-badge {
-            background: rgba(34, 211, 238, 0.1);
-            color: var(--accent);
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
             padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
             font-size: 0.7rem;
@@ -224,6 +193,7 @@
             display: inline-block;
         }
 
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -241,7 +211,7 @@
 
         .modal-content {
             background: #0f172a;
-            border: 1px solid var(--accent);
+            border: 1px solid var(--primary);
             width: 100%;
             max-width: 1000px;
             max-height: 90vh;
@@ -249,7 +219,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 0 100px rgba(34, 211, 238, 0.1);
+            box-shadow: 0 0 100px rgba(139, 92, 246, 0.1);
         }
 
         .modal-header {
@@ -274,7 +244,7 @@
         }
 
         .modal-section h3 {
-            color: var(--accent);
+            color: var(--primary);
             margin-bottom: 1.5rem;
             font-size: 1.2rem;
             display: flex;
@@ -348,82 +318,106 @@
             background: #334155;
             border-radius: 1px;
         }
+
+        .nav {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
     </style>
 </head>
 
 <body>
 
     <nav class="nav">
-        <a href="/visualize" class="nav-link active">Ingestion Trace</a>
-        <a href="/visualize-query" class="nav-link">Query Trace</a>
+        <a href="/visualize" class="nav-link">Ingestion Trace</a>
+        <a href="/visualize-query" class="nav-link active">Query Trace</a>
     </nav>
 
     <div class="header">
-        <h1>RAG Internal Operations Trace</h1>
-        <p>A deep-dive into the mathematical and semantic layers of text ingestion</p>
+        <h1>RAG Retrieval Trace</h1>
+        <p>Real-time visualization of semantic search and answer generation</p>
     </div>
 
     <div class="container">
         <!-- Input Section -->
         <div class="config-card" id="input-section">
             <div class="input-group">
-                <label>Knowledge Source Title</label>
-                <input type="text" id="title" placeholder="e.g. Neural Networks 101">
+                <label>Ask a Question</label>
+                <input type="text" id="query" placeholder="e.g. What is the main theme of the document?">
             </div>
-            <div class="input-group">
-                <label>Source Content</label>
-                <textarea id="content" rows="4" placeholder="Paste data for semantic processing..."></textarea>
-            </div>
-            <button id="start-btn" onclick="runFlow()">Engage Processing Engine</button>
+            <button id="start-btn" onclick="runQueryFlow()">Engage Retrieval Engine</button>
         </div>
 
         <!-- Flow Visualizer -->
         <div class="flow-container" id="flow-display">
             <!-- Stage 1 -->
             <div class="step-card" id="step-1" onclick="openModal(1)">
-                <div class="step-icon">📄</div>
-                <div class="step-title">1. Tokenization</div>
-                <div class="logic-hint">OP: Text Cleaning</div>
+                <div class="step-icon">🔍</div>
+                <div class="step-title">1. Query Vector</div>
+                <div class="logic-hint">OP: Text -> Math</div>
                 <div class="data-display" id="display-1">---</div>
-                <div class="transformation-badge">FORMAT: RAW</div>
+                <div class="transformation-badge">768-DIM VECTOR</div>
             </div>
 
             <!-- Stage 2 -->
             <div class="step-card" id="step-2" onclick="openModal(2)">
-                <div class="step-icon">✂️</div>
-                <div class="step-title">2. Semantic Analysis</div>
-                <div class="logic-hint">OP: Cosine Delta</div>
+                <div class="step-icon">🎯</div>
+                <div class="step-title">2. Semantic Search</div>
+                <div class="logic-hint">OP: Cosine Search</div>
                 <div class="data-display" id="display-2">---</div>
-                <div class="transformation-badge">FORMAT: SEGMENTED</div>
+                <div class="transformation-badge">TOP-K CONTEXT</div>
             </div>
 
             <!-- Stage 3 -->
             <div class="step-card" id="step-3" onclick="openModal(3)">
-                <div class="step-icon">🧬</div>
-                <div class="step-title">3. Vectorization</div>
-                <div class="logic-hint">OP: Latent Mapping</div>
+                <div class="step-icon">📝</div>
+                <div class="step-title">3. Prompt Assemble</div>
+                <div class="logic-hint">OP: Context Inject</div>
                 <div class="data-display" id="display-3">---</div>
-                <div class="transformation-badge">FORMAT: 768-DIM</div>
+                <div class="transformation-badge">LLM PROMPT</div>
             </div>
 
             <!-- Stage 4 -->
             <div class="step-card" id="step-4" onclick="openModal(4)">
-                <div class="step-icon">🏢</div>
-                <div class="step-title">4. Space Projection</div>
-                <div class="logic-hint">OP: HNSW Index</div>
+                <div class="step-icon">✨</div>
+                <div class="step-title">4. Generation</div>
+                <div class="logic-hint">OP: Gemini 2.5</div>
                 <div class="data-display" id="display-4">---</div>
-                <div class="transformation-badge">FORMAT: VECTOR DB</div>
+                <div class="transformation-badge">FINAL ANSWER</div>
             </div>
         </div>
 
-        <div class="log-bar" id="log-bar">Warming up Gemini semantic clusters...</div>
+        <div class="log-bar" id="log-bar">Warming up retrieval clusters...</div>
     </div>
 
     <!-- Enhanced Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2 id="modal-title" style="color: var(--accent);">Operation Details</h2>
+                <h2 id="modal-title" style="color: var(--primary);">Retrieval Internals</h2>
                 <button class="close-btn" onclick="closeModal()">×</button>
             </div>
             <div class="modal-grid">
@@ -443,10 +437,10 @@
         const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
         const stageData = {
-            1: { title: "Tokenization Stage", data: "", logic: [] },
-            2: { title: "Semantic Analysis Stage", data: "", logic: [] },
-            3: { title: "Vectorization Stage", data: "", logic: [] },
-            4: { title: "Storage Indexing Stage", data: "", logic: [] }
+            1: { title: "Query Embedding Stage", data: "", logic: [] },
+            2: { title: "Similarity Search Stage", data: "", logic: [] },
+            3: { title: "Prompt Construction Stage", data: "", logic: [] },
+            4: { title: "LLM Generation Stage", data: "", logic: [] }
         };
 
         function openModal(stepId) {
@@ -476,10 +470,9 @@
             }
         }
 
-        async function runFlow() {
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
-            if (!title || !content) return alert("Fill data first.");
+        async function runQueryFlow() {
+            const query = document.getElementById('query').value;
+            if (!query) return alert("Ask something first.");
 
             document.getElementById('input-section').style.display = 'none';
             document.getElementById('flow-display').style.display = 'grid';
@@ -487,80 +480,73 @@
             const logBar = document.getElementById('log-bar');
 
             try {
-                logBar.innerText = "Operation: Initiating real-time ingestion trace...";
+                logBar.innerText = "Operation: Generating query embedding via Gemini text-embedding-001...";
 
-                const response = await fetch('/api/v1/trace-ingest', {
+                const response = await fetch('/api/v1/trace-query', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, content })
+                    body: JSON.stringify({ query: query, top_k: 3 })
                 });
 
-                if (!response.ok) throw new Error("Backend processing failed");
+                if (!response.ok) throw new Error("Retrieval failed");
                 const result = await response.json();
 
                 // STAGE 1
-                logBar.innerText = "Operation: Tokenizing and normalizing raw stream...";
-                stageData[1].data = `SOURCE: ${result.title}\n\nCONTENT:\n${result.raw_content}`;
+                logBar.innerText = "Operation: Projecting question into semantic latent space...";
+                const qVec = result.query_vector;
+                stageData[1].data = `QUERY: ${query}\n\nEMBEDDING (First 10):\n[${qVec.slice(0, 10).join(', ')} ... ]`;
                 stageData[1].logic = [
-                    { title: "Cleaning", desc: "Removing non-UTF8 characters and normalizing whitespace." },
-                    { title: "Token Counting", desc: `Detected ~${Math.floor(result.raw_content.length / 4)} tokens.` }
+                    { title: "Query Vectorization", desc: "Converting the text question into a 768-D mathematical vector." },
+                    { title: "Embedding Sensitivity", desc: "Gemini captures semantic intent, not just keyword matches." }
                 ];
                 document.getElementById('step-1').classList.add('active');
-                await typeText(document.getElementById('display-1'), stageData[1].data);
-                await sleep(800);
 
-                // STAGE 2
-                logBar.innerText = "Operation: Extracting semantic chunk boundaries via Gemini...";
-                stageData[2].data = result.chunks.map((c, i) => `[CHUNK ${i + 1}]\n${c}`).join('\n\n---\n\n');
-                stageData[2].logic = [
-                    { title: "Semantic Splitting", desc: "Using Gemini Embeddings to detect high-entropy shifts in topic." },
-                    { title: "Result", desc: `Successfully derived ${result.total_chunks} logical segments.` }
-                ];
-                document.getElementById('step-2').classList.add('active');
-                await typeText(document.getElementById('display-2'), stageData[2].data);
-                await sleep(800);
-
-                // STAGE 3
-                logBar.innerText = "Operation: Retrieving absolute coordinates from Latent Space...";
-                const firstVec = result.vectors[0];
-                stageData[3].data = `MODEL: gemini-embedding-001\nDIM: ${firstVec.length}\n\nVECTOR:\n[${firstVec.join(', ')}]`;
-                stageData[3].logic = [
-                    { title: "Google API Call", desc: "Received high-precision floating point vectors representing concept clusters." },
-                    { title: "L2 Norm", desc: "Vectors normalized to unit length for cosine similarity arithmetic." }
-                ];
-                document.getElementById('step-3').classList.add('active');
-
-                const d3 = document.getElementById('display-3');
-                d3.innerHTML = '<div class="vector-grid"></div>';
-                const grid = d3.querySelector('.vector-grid');
+                const d1 = document.getElementById('display-1');
+                d1.innerHTML = '<div class="vector-grid"></div>';
+                const grid = d1.querySelector('.vector-grid');
                 for (let i = 0; i < 60; i++) {
                     const pixel = document.createElement('div');
                     pixel.className = 'vector-pixel';
-                    pixel.style.opacity = Math.random();
-                    pixel.style.background = `rgba(34, 211, 238, ${Math.random()})`;
+                    pixel.style.background = `rgba(139, 92, 246, ${Math.random()})`;
                     grid.appendChild(pixel);
                 }
-                d3.innerHTML += `<br><span style="color:#6ee7b7; font-size: 0.7rem;">[${firstVec.slice(0, 5).join(', ')} ... ]</span>`;
+                d1.innerHTML += `<br><span style="color:#a78bfa; font-size: 0.7rem;">[Vec captured]</span>`;
+                await sleep(800);
+
+                // STAGE 2
+                logBar.innerText = "Operation: Searching ChromaDB via Cosine Similarity...";
+                stageData[2].data = result.retrieved_chunks.map((c, i) => `[RESULT ${i + 1}] (Score: ${c.score.toFixed(4)})\n${c.content}`).join('\n\n---\n\n');
+                stageData[2].logic = [
+                    { title: "Similarity Arithmetic", desc: "Finding pieces of text in 'manual_documents' that are closest to the query vector." },
+                    { title: "Top-K Selection", desc: `Retrieved ${result.retrieved_chunks.length} chunks from the HNSW graph.` }
+                ];
+                document.getElementById('step-2').classList.add('active');
+                await typeText(document.getElementById('display-2'), stageData[2].data);
                 await sleep(1000);
 
+                // STAGE 3
+                logBar.innerText = "Operation: Building LLM prompt (Context + Instruction + Question)...";
+                stageData[3].data = result.llm_prompt;
+                stageData[3].logic = [
+                    { title: "Prompt Engineering", desc: "Wrapping the retrieved context with system instructions to prevent hallucination." },
+                    { title: "Instruction", desc: "Using 'gemini-2.5-flash' high-context window protocol." }
+                ];
+                document.getElementById('step-3').classList.add('active');
+                await typeText(document.getElementById('display-3'), stageData[3].data);
+                await sleep(800);
+
                 // STAGE 4
-                logBar.innerText = "Operation: Persisting HNSW graph and Metadata to ChromaDB...";
-                const dbInfo = {
-                    status: "COMMITTED",
-                    index: "HNSW",
-                    chunks: result.total_chunks,
-                    metadata: result.metadata
-                };
-                stageData[4].data = JSON.stringify(dbInfo, null, 2);
+                logBar.innerText = "Operation: Streaming final generation from Gemini 2.5 Flash...";
+                stageData[4].data = result.llm_answer;
                 stageData[4].logic = [
-                    { title: "Graph Update", desc: "Inter-chunk connections updated in the Hierarchical Navigable Small World map." },
-                    { title: "Persistence", desc: "Serialized to SQLite file at ./data/chroma_db." }
+                    { title: "Neural Synthesis", desc: "Combining source knowledge with pre-trained reasoning." },
+                    { title: "Performance", desc: `Total retrieval-to-answer latency: ${result.total_time_ms.toFixed(0)}ms` }
                 ];
                 document.getElementById('step-4').classList.add('active');
                 await typeText(document.getElementById('display-4'), stageData[4].data);
 
-                logBar.style.color = "#6ee7b7";
-                logBar.innerHTML = "✅ LIVE INGESTION TRACE COMPLETE. Click cards for deep metadata.";
+                logBar.style.color = "#10b981";
+                logBar.innerHTML = `✅ RETRIEVAL COMPLETE (${result.total_time_ms.toFixed(0)}ms). Click cards for operation trace.`;
 
             } catch (err) {
                 logBar.style.color = "#fb7185";
@@ -568,7 +554,7 @@
             }
 
             const resetBtn = document.createElement('button');
-            resetBtn.innerText = "Run Another Trace";
+            resetBtn.innerText = "Clear & Re-Ask";
             resetBtn.style.marginTop = "2rem";
             resetBtn.onclick = () => location.reload();
             document.querySelector('.container').appendChild(resetBtn);

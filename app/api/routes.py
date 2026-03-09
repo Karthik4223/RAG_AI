@@ -7,7 +7,8 @@ from app.schemas.rag import (
     DocumentChunk, 
     FeedbackRequest,
     ManualIngestRequest,
-    IngestTraceResponse
+    IngestTraceResponse,
+    QueryTraceResponse
 )
 from app.services.document_service import DocumentService
 from app.services.vector_store import VectorStoreFactory, ChromaStore
@@ -109,6 +110,63 @@ async def trace_ingest(
         )
     except Exception as e:
         logger.error(f"Trace ingestion failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/trace-query", response_model=QueryTraceResponse)
+async def trace_query(
+    request: QueryRequest,
+    vector_store: ChromaStore = Depends(get_manual_vector_store),
+    llm_service: LLMService = Depends(get_llm_service),
+    doc_service: DocumentService = Depends(get_doc_service)
+):
+    import time
+    start_time = time.time()
+    try:
+        logger.info(f"Tracing query: {request.query}")
+        
+        # 1. Vectorize Query
+        query_vector = doc_service.embeddings.embed_query(request.query)
+        
+        # 2. Similarity Search
+        relevant_chunks = vector_store.similarity_search_with_score(
+            query=request.query, 
+            k=request.top_k or 5,
+            threshold=request.threshold or 0.0
+        )
+        
+        # Format chunks for response
+        chunks_for_response = [
+            DocumentChunk(
+                content=doc.page_content,
+                metadata=doc.metadata,
+                score=score
+            ) for doc, score in relevant_chunks
+        ]
+        
+        # 3. LLM Generation
+        if not relevant_chunks:
+            answer = "I couldn't find any relevant information to answer your question."
+            prompt = "No context provided."
+        else:
+            result = llm_service.generate_answer(request.query, relevant_chunks)
+            answer = result["answer"]
+            # To get the prompt, we'd ideally have it from LLMService. 
+            # For now, let's reconstruct what goes into it.
+            context = "\n\n".join([doc.page_content for doc, _ in relevant_chunks])
+            prompt = f"System: Use context below to answer...\n\nContext: {context}\n\nQuestion: {request.query}"
+
+        total_time = (time.time() - start_time) * 1000
+        
+        return QueryTraceResponse(
+            query=request.query,
+            query_vector=query_vector,
+            retrieved_chunks=chunks_for_response,
+            llm_prompt=prompt,
+            llm_answer=answer,
+            total_time_ms=total_time
+        )
+    except Exception as e:
+        logger.error(f"Trace query failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/query", response_model=QueryResponse)

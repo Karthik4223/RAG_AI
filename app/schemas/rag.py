@@ -39,3 +39,11 @@ class IngestTraceResponse(BaseModel):
     vectors: List[List[float]]
     metadata: Dict[str, Any]
     total_chunks: int
+
+class QueryTraceResponse(BaseModel):
+    query: str
+    query_vector: List[float]
+    retrieved_chunks: List[DocumentChunk]
+    llm_prompt: str
+    llm_answer: str
+    total_time_ms: float
