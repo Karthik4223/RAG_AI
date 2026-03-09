@@ -9,12 +9,13 @@
         rel="stylesheet">
     <style>
         :root {
-            --primary: #4F46E5;
-            --secondary: #ec4899;
-            --accent: #06b6d4;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text: #f8fafc;
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #22d3ee;
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f3f4f6;
         }
 
         * {
@@ -27,39 +28,40 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            overflow-x: hidden;
-            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
             min-height: 100vh;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #818cf8, #c084fc);
+            font-size: 3rem;
+            background: linear-gradient(to right, #818cf8, #c084fc, #fb7185);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
         .container {
             width: 100%;
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            max-width: 1200px;
         }
 
-        .input-section {
+        /* Input Form */
+        .config-card {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
             padding: 2rem;
             border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
         .input-group {
@@ -70,385 +72,289 @@
             display: block;
             margin-bottom: 0.5rem;
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         textarea,
         input {
             width: 100%;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0f172a;
+            border: 1px solid var(--border);
             border-radius: 0.75rem;
             padding: 1rem;
             color: white;
             font-family: inherit;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
         textarea:focus,
         input:focus {
             border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
         button {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 1rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
             font-size: 1.1rem;
+            transition: transform 0.2s;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            transform: scale(1.01);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Animation Flow */
-        .visualizer-stage {
-            height: 400px;
-            position: relative;
-            background: var(--card-bg);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden;
+        /* Visual Flow Layout */
+        .flow-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
             display: none;
-            /* Shown toggle */
         }
 
-        .step-label {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--accent);
-            text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
-            text-align: center;
+        .step-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: all 0.5s;
+            opacity: 0.3;
         }
 
-        .node {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
+        .step-card.active {
+            opacity: 1;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-            z-index: 10;
+            font-size: 1.5rem;
         }
 
-        .node i {
-            font-size: 2rem;
-            margin-bottom: 5px;
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent);
         }
 
-        .node-input {
-            left: 10%;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #3b82f6;
-            border: 4px solid #93c5fd;
-        }
-
-        .node-chunker {
-            left: 40%;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #8b5cf6;
-            border: 4px solid #c4b5fd;
-            opacity: 0;
-        }
-
-        .node-google {
-            left: 70%;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #10b981;
-            border: 4px solid #6ee7b7;
-            opacity: 0;
-        }
-
-        .node-db {
-            right: 5%;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #f59e0b;
-            border: 4px solid #fcd34d;
-            opacity: 0;
-        }
-
-        .data-packet {
-            position: absolute;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            color: #0f172a;
-            font-weight: bold;
-            font-size: 0.8rem;
-            z-index: 5;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-            white-space: nowrap;
-            display: none;
-        }
-
-        .vector-visual {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px;
-            width: 80px;
-            justify-content: center;
-        }
-
-        .vector-bit {
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            border-radius: 1px;
-            animation: pulse-bit 1s infinite alternate;
-        }
-
-        @keyframes pulse-bit {
-            from {
-                opacity: 0.3;
-                transform: scale(0.8);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1.1);
-            }
-        }
-
-        .connector {
-            position: absolute;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            z-index: 1;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .log-stream {
-            margin-top: 1rem;
-            background: #000;
-            border-radius: 1rem;
+        .data-display {
+            background: #020617;
+            border-radius: 0.75rem;
             padding: 1rem;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: #4ade80;
-            height: 150px;
+            font-size: 0.8rem;
+            min-height: 120px;
+            max-height: 200px;
             overflow-y: auto;
-            border: 1px solid #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+            word-break: break-all;
         }
 
-        .log-entry {
-            margin-bottom: 5px;
-            opacity: 0;
-            animation: fadeIn 0.3s forwards;
+        .transformation-badge {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+        .vector-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
         }
 
-        /* Animation Classes */
-        .fade-in {
-            opacity: 1 !important;
-            transition: opacity 1s;
+        .vector-pixel {
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 1px;
         }
 
-        .path-active {
-            background: linear-gradient(to right, transparent, var(--accent), transparent) !important;
-            background-size: 200% 100% !important;
-            animation: flow 2s infinite linear !important;
-        }
-
-        @keyframes flow {
-            from {
-                background-position: 200% 0;
-            }
-
-            to {
-                background-position: -200% 0;
-            }
+        .log-bar {
+            margin-top: 2rem;
+            background: #000;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: inherit;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>RAG Ingestion Journey</h1>
-    <p style="color: #94a3b8; margin-bottom: 2rem;">Watch your text transform into a high-dimensional vector</p>
+    <div class="header">
+        <h1>RAG Transform Visualizer</h1>
+        <p>Step-by-step trace of how human language becomes machine math</p>
+    </div>
 
     <div class="container">
-        <div class="input-section" id="form-container">
+        <!-- Input Section -->
+        <div class="config-card" id="input-section">
             <div class="input-group">
-                <label>Title</label>
-                <input type="text" id="title" placeholder="e.g. Ring Connection Guide">
+                <label>Document Title</label>
+                <input type="text" id="title" placeholder="e.g., Enterprise Architecture 2024">
             </div>
             <div class="input-group">
-                <label>Content</label>
-                <textarea id="content" rows="6" placeholder="Paste your text here..."></textarea>
+                <label>Knowledge Content</label>
+                <textarea id="content" rows="5" placeholder="Enter text to process..."></textarea>
             </div>
-            <button onclick="startVisualization()">Begin Transformation</button>
+            <button id="start-btn" onclick="runFlow()">Analyze Transformation</button>
         </div>
 
-        <div class="visualizer-stage" id="stage">
-            <div class="step-label" id="step-name">Initializing...</div>
-
-            <div class="node node-input" id="node-1">
-                <span>Input</span>
+        <!-- Flow Visualizer -->
+        <div class="flow-container" id="flow-display">
+            <!-- Step 1 -->
+            <div class="step-card" id="step-1">
+                <div class="step-icon">📥</div>
+                <div class="step-title">Raw Input</div>
+                <div class="transformation-badge">FORMAT: PLAIN TEXT</div>
+                <div class="data-display" id="display-1">Waiting...</div>
             </div>
 
-            <div class="connector" style="left: 20%; width: 22%;"></div>
-
-            <div class="node node-chunker" id="node-2">
-                <span>Semantic Chunker</span>
+            <!-- Step 2 -->
+            <div class="step-card" id="step-2">
+                <div class="step-icon">✂️</div>
+                <div class="step-title">Semantic Chunker</div>
+                <div class="transformation-badge">FORMAT: CHUNKED LIST</div>
+                <div class="data-display" id="display-2">Waiting...</div>
             </div>
 
-            <div class="connector" style="left: 50%; width: 22%;"></div>
-
-            <div class="node node-google" id="node-3">
-                <span>Gemini Embedding</span>
+            <!-- Step 3 -->
+            <div class="step-card" id="step-3">
+                <div class="step-icon">🧠</div>
+                <div class="step-title">Embedding (Gemini)</div>
+                <div class="transformation-badge">FORMAT: HIGH-DIM VECTOR</div>
+                <div class="data-display" id="display-3">Waiting...</div>
             </div>
 
-            <div class="connector" style="left: 80%; width: 14%;"></div>
-
-            <div class="node node-db" id="node-4">
-                <span>Chroma DB</span>
+            <!-- Step 4 -->
+            <div class="step-card" id="step-4">
+                <div class="step-icon">💾</div>
+                <div class="step-title">Vector Index</div>
+                <div class="transformation-badge">FORMAT: HNSW STORE</div>
+                <div class="data-display" id="display-4">Waiting...</div>
             </div>
-
-            <div id="packet" class="data-packet">Content</div>
         </div>
 
-        <div class="log-stream" id="logs">
-            <div class="log-entry" style="color: #94a3b8;">System ready. Waiting for user input...</div>
-        </div>
+        <div class="log-bar" id="log-bar">Initializing pipeline...</div>
     </div>
 
     <script>
-        const logs = document.getElementById('logs');
-        const packet = document.getElementById('packet');
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
-        function addLog(text, color = '#4ade80') {
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.style.color = color;
-            entry.innerText = `[${new Date().toLocaleTimeString()}] ${text}`;
-            logs.prepend(entry);
+        async function typeText(element, text, speed = 2) {
+            element.innerHTML = "";
+            for (let i = 0; i < text.length; i++) {
+                element.innerHTML += text[i];
+                if (i > 250) { element.innerHTML += "..."; break; }
+                await sleep(speed);
+            }
         }
 
-        async function startVisualization() {
+        async function runFlow() {
             const title = document.getElementById('title').value;
             const content = document.getElementById('content').value;
 
-            if (!title || !content) {
-                alert("Please fill in both title and content!");
-                return;
-            }
+            if (!title || !content) return alert("Please fill fields");
 
-            document.getElementById('form-container').style.display = 'none';
-            document.getElementById('stage').style.display = 'block';
-
-            const stepName = document.getElementById('step-name');
+            // UI Prep
+            document.getElementById('input-section').style.display = 'none';
+            document.getElementById('flow-display').style.display = 'grid';
+            document.getElementById('log-bar').style.display = 'block';
+            const logBar = document.getElementById('log-bar');
 
             // --- STEP 1: INPUT ---
-            stepName.innerText = "Step 1: Receiving Raw Input";
-            addLog(`Received raw text: "${title}" (${content.length} chars)`);
-            packet.innerText = title;
-            packet.style.display = 'block';
-            packet.style.left = '15%';
-            packet.style.top = '50%';
-
+            logBar.innerText = "System receiving raw input data...";
+            const s1 = document.getElementById('step-1');
+            const d1 = document.getElementById('display-1');
+            s1.classList.add('active');
+            await typeText(d1, `TITLE: ${title}\n\nCONTENT: ${content}`);
             await sleep(1500);
 
-            // --- STEP 2: SEMANTIC CHUNKING ---
-            stepName.innerText = "Step 2: Semantic Chunking";
-            addLog("Analyzing document structure...");
+            // --- STEP 2: CHUNKING ---
+            logBar.innerText = "Gemini AI performing semantic analysis to determine optimal chunk boundaries...";
+            const s2 = document.getElementById('step-2');
+            const d2 = document.getElementById('display-2');
+            s2.classList.add('active');
 
-            // Move packet to chunker
-            animate(packet, { left: '42%' }, 1000);
-            await sleep(1000);
+            // Mock chunking logic
+            const chunks = content.split(/[\.!\?]+/).filter(x => x.length > 5);
+            let chunkDisplay = chunks.slice(0, 3).map((c, i) => `[Chunk ${i + 1}]: ${c.trim()}.`).join('\n\n');
+            if (chunks.length > 3) chunkDisplay += "\n\n[...more chunks discovered]";
 
-            document.getElementById('node-2').classList.add('fade-in');
-            addLog("Gemini identifying topic boundaries...");
-            await sleep(1000);
-
-            packet.innerText = "...breaking into chunks...";
-            packet.style.background = '#8b5cf6';
-            packet.style.color = 'white';
-            addLog("Semantic break found. Split text into 1 logical chunk.");
+            await typeText(d2, chunkDisplay);
             await sleep(1500);
 
             // --- STEP 3: EMBEDDING ---
-            stepName.innerText = "Step 3: Vector Generation (Google API)";
-            addLog("Sending chunks to text-embedding-004...");
+            logBar.innerText = "Mapping human concepts to text-embedding-004 vector space...";
+            const s3 = document.getElementById('step-3');
+            const d3 = document.getElementById('display-3');
+            s3.classList.add('active');
 
-            animate(packet, { left: '72%' }, 1000);
-            await sleep(1000);
-
-            document.getElementById('node-3').classList.add('fade-in');
-            packet.innerHTML = '';
-            packet.classList.add('vector-visual');
-            for (let i = 0; i < 12; i++) {
-                packet.innerHTML += '<div class="vector-bit"></div>';
+            d3.innerHTML = '<div class="vector-grid"></div>';
+            const grid = d3.querySelector('.vector-grid');
+            for (let i = 0; i < 60; i++) {
+                const pixel = document.createElement('div');
+                pixel.className = 'vector-pixel';
+                pixel.style.opacity = Math.random();
+                pixel.style.background = `rgba(34, 211, 238, ${Math.random()})`;
+                grid.appendChild(pixel);
             }
-
-            addLog("Translating human language into 768-dimensional math...");
+            const vectorSample = Array.from({ length: 8 }, () => (Math.random() * 2 - 1).toFixed(4));
+            d3.innerHTML += `<br><span style="color:#6ee7b7; font-size: 0.7rem;">[${vectorSample.join(', ')} ... +760 more]</span>`;
             await sleep(2000);
 
             // --- STEP 4: STORAGE ---
-            stepName.innerText = "Step 4: Persistent Indexing";
-            addLog("Calculating metadata for storage...");
+            logBar.innerText = "Indexing vectors into ChromaDB SQLite persistence...";
+            const s4 = document.getElementById('step-4');
+            const d4 = document.getElementById('display-4');
+            s4.classList.add('active');
 
-            animate(packet, { left: '90%', opacity: 0 }, 1000);
-            await sleep(800);
+            const dbSchema = {
+                id: crypto.randomUUID().slice(0, 8),
+                collection: "rag_documents",
+                metadata: { source: title, timestamp: Date.now() }
+            };
+            await typeText(d4, JSON.stringify(dbSchema, null, 2));
 
-            document.getElementById('node-4').classList.add('fade-in');
-            addLog("Stored in ChromaDB (SQLite + HNSW Index).", '#f59e0b');
-            addLog("SUCCESS: Knowledge Base Updated.", '#fbbf24');
+            logBar.style.color = "#6ee7b7";
+            logBar.innerHTML = "✅ Transformation Complete. Knowledge indexed successfully.";
 
-            await sleep(1000);
-            stepName.innerText = "Processing Complete!";
-
-            const btn = document.createElement('button');
-            btn.innerText = "Add Another Document";
-            btn.style.marginTop = "20px";
-            btn.onclick = () => location.reload();
-            document.querySelector('.container').appendChild(btn);
+            // Reset Button
+            const resetBtn = document.createElement('button');
+            resetBtn.innerText = "Process Another Text";
+            resetBtn.style.marginTop = "2rem";
+            resetBtn.onclick = () => location.reload();
+            document.querySelector('.container').appendChild(resetBtn);
         }
-
-        function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
-
-        function animate(el, props, duration) {
-            el.style.transition = `all ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-            Object.assign(el.style, props);
-        }
-
     </script>
 </body>
 
