@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from app.api.routes import router
 from app.core.config import settings
 from app.core.logging import setup_logging
@@ -25,6 +27,14 @@ setup_logging()
 
 # Include routes
 app.include_router(router, prefix=settings.API_V1_STR)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+@app.get("/visualize", response_class=HTMLResponse)
+async def get_visualizer():
+    with open("app/static/visualizer.html", "r") as f:
+        return f.read()
 
 @app.get("/")
 async def root():
