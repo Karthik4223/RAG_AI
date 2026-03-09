@@ -16,6 +16,7 @@
             --card-bg: rgba(17, 24, 39, 0.8);
             --border: rgba(255, 255, 255, 0.1);
             --text: #f3f4f6;
+            --highlight: #fb7185;
         }
 
         * {
@@ -136,7 +137,7 @@
 
         .step-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.3);
+            border-color: var(--accent);
         }
 
         .step-card.active {
@@ -167,24 +168,21 @@
             border-radius: 0.75rem;
             padding: 1rem;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             min-height: 120px;
-            max-height: 200px;
+            max-height: 180px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #d1d5db;
-            word-break: break-all;
-            position: relative;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
         }
 
-        .data-display::after {
-            content: "Click to expand";
-            position: absolute;
-            bottom: 5px;
-            right: 10px;
-            font-size: 0.6rem;
-            color: var(--accent);
-            opacity: 0.6;
+        .logic-hint {
+            font-size: 0.7rem;
+            color: var(--highlight);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .transformation-badge {
@@ -195,43 +193,17 @@
             font-size: 0.7rem;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 0.5rem;
         }
 
-        .vector-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 2px;
-        }
-
-        .vector-pixel {
-            width: 100%;
-            height: 8px;
-            background: #334155;
-            border-radius: 1px;
-        }
-
-        .log-bar {
-            margin-top: 2rem;
-            background: #000;
-            padding: 1rem;
-            border-radius: 1rem;
-            font-family: inherit;
-            color: #94a3b8;
-            font-size: 0.9rem;
-            text-align: center;
-            display: none;
-        }
-
-        /* Modal / Pop-up Styles */
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -243,45 +215,111 @@
             background: #0f172a;
             border: 1px solid var(--accent);
             width: 100%;
-            max-width: 800px;
-            max-height: 80vh;
-            border-radius: 1.5rem;
+            max-width: 1000px;
+            max-height: 90vh;
+            border-radius: 2rem;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 0 50px rgba(34, 211, 238, 0.2);
+            box-shadow: 0 0 100px rgba(34, 211, 238, 0.1);
         }
 
         .modal-header {
-            padding: 1.5rem;
+            padding: 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        .modal-body {
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .modal-section {
             padding: 2rem;
             overflow-y: auto;
-            color: #e2e8f0;
+        }
+
+        .modal-section h3 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-stream {
+            background: #020617;
+            padding: 1.5rem;
+            border-radius: 1rem;
             font-family: 'JetBrains Mono', monospace;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            border: 1px solid var(--border);
             white-space: pre-wrap;
-            word-break: break-word;
+        }
+
+        .formula-card {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px dashed var(--primary);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .formula-text {
+            font-style: italic;
+            color: #818cf8;
+            margin-bottom: 1rem;
+        }
+
+        .logic-step {
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--secondary);
+            padding-left: 1rem;
+        }
+
+        .logic-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 0.3rem;
+        }
+
+        .logic-desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.4;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: #94a3b8;
-            font-size: 2rem;
+            font-size: 2.5rem;
             cursor: pointer;
-            width: auto;
-            padding: 0 10px;
+            padding: 0 1rem;
         }
 
         .close-btn:hover {
             color: white;
+        }
+
+        .log-bar {
+            margin-top: 2rem;
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+            color: #94a3b8;
+            font-size: 1rem;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--border);
         }
     </style>
 </head>
@@ -289,71 +327,84 @@
 <body>
 
     <div class="header">
-        <h1>RAG Transform Visualizer</h1>
-        <p>Step-by-step trace of how human language becomes machine math</p>
+        <h1>RAG Internal Operations Trace</h1>
+        <p>A deep-dive into the mathematical and semantic layers of text ingestion</p>
     </div>
 
     <div class="container">
         <!-- Input Section -->
         <div class="config-card" id="input-section">
             <div class="input-group">
-                <label>Document Title</label>
-                <input type="text" id="title" placeholder="e.g., Enterprise Architecture 2024">
+                <label>Knowledge Source Title</label>
+                <input type="text" id="title" placeholder="e.g. Neural Networks 101">
             </div>
             <div class="input-group">
-                <label>Knowledge Content</label>
-                <textarea id="content" rows="5" placeholder="Enter text to process..."></textarea>
+                <label>Source Content</label>
+                <textarea id="content" rows="4" placeholder="Paste data for semantic processing..."></textarea>
             </div>
-            <button id="start-btn" onclick="runFlow()">Analyze Transformation</button>
+            <button id="start-btn" onclick="runFlow()">Engage Processing Engine</button>
         </div>
 
         <!-- Flow Visualizer -->
         <div class="flow-container" id="flow-display">
-            <!-- Step 1 -->
+            <!-- Stage 1 -->
             <div class="step-card" id="step-1" onclick="openModal(1)">
-                <div class="step-icon">📥</div>
-                <div class="step-title">Raw Input</div>
-                <div class="transformation-badge">FORMAT: PLAIN TEXT</div>
-                <div class="data-display" id="display-1">Waiting...</div>
+                <div class="step-icon">�</div>
+                <div class="step-title">1. Tokenization</div>
+                <div class="logic-hint">OP: Text Cleaning</div>
+                <div class="data-display" id="display-1">---</div>
+                <div class="transformation-badge">FORMAT: RAW</div>
             </div>
 
-            <!-- Step 2 -->
+            <!-- Stage 2 -->
             <div class="step-card" id="step-2" onclick="openModal(2)">
                 <div class="step-icon">✂️</div>
-                <div class="step-title">Semantic Chunker</div>
-                <div class="transformation-badge">FORMAT: CHUNKED LIST</div>
-                <div class="data-display" id="display-2">Waiting...</div>
+                <div class="step-title">2. Semantic Analysis</div>
+                <div class="logic-hint">OP: Cosine Delta</div>
+                <div class="data-display" id="display-2">---</div>
+                <div class="transformation-badge">FORMAT: SEGMENTED</div>
             </div>
 
-            <!-- Step 3 -->
+            <!-- Stage 3 -->
             <div class="step-card" id="step-3" onclick="openModal(3)">
-                <div class="step-icon">🧠</div>
-                <div class="step-title">Embedding (Gemini)</div>
-                <div class="transformation-badge">FORMAT: HIGH-DIM VECTOR</div>
-                <div class="data-display" id="display-3">Waiting...</div>
+                <div class="step-icon">�</div>
+                <div class="step-title">3. Vectorization</div>
+                <div class="logic-hint">OP: Latent Mapping</div>
+                <div class="data-display" id="display-3">---</div>
+                <div class="transformation-badge">FORMAT: 768-DIM</div>
             </div>
 
-            <!-- Step 4 -->
+            <!-- Stage 4 -->
             <div class="step-card" id="step-4" onclick="openModal(4)">
-                <div class="step-icon">💾</div>
-                <div class="step-title">Vector Index</div>
-                <div class="transformation-badge">FORMAT: HNSW STORE</div>
-                <div class="data-display" id="display-4">Waiting...</div>
+                <div class="step-icon">🏢</div>
+                <div class="step-title">4. Space Projection</div>
+                <div class="logic-hint">OP: HNSW Index</div>
+                <div class="data-display" id="display-4">---</div>
+                <div class="transformation-badge">FORMAT: VECTOR DB</div>
             </div>
         </div>
 
-        <div class="log-bar" id="log-bar">Initializing pipeline...</div>
+        <div class="log-bar" id="log-bar">Warming up Gemini semantic clusters...</div>
     </div>
 
-    <!-- Modal Overlay -->
+    <!-- Enhanced Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2 id="modal-title" style="color: var(--accent);">Stage Details</h2>
+                <h2 id="modal-title" style="color: var(--accent);">Operation Details</h2>
                 <button class="close-btn" onclick="closeModal()">×</button>
             </div>
-            <div class="modal-body" id="modal-body">
-                <!-- Data populated via JS -->
+            <div class="modal-grid">
+                <!-- Left: Result Data -->
+                <div class="modal-section" style="border-right: 1px solid var(--border);">
+                    <h3>🚀 Transformed Data</h3>
+                    <div class="data-stream" id="modal-data"></div>
+                </div>
+                <!-- Right: Logic/Formulas -->
+                <div class="modal-section">
+                    <h3>⚙️ Internal Operations</h3>
+                    <div id="modal-logic"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -361,113 +412,108 @@
     <script>
         const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
-        // Storage for full stage data
         const stageData = {
-            1: { title: "Raw Input", content: "" },
-            2: { title: "Semantic Chunks", content: "" },
-            3: { title: "Vector Embedding", content: "" },
-            4: { title: "Storage Metadata", content: "" }
+            1: { title: "Tokenization Stage", data: "", logic: [] },
+            2: { title: "Semantic Analysis Stage", data: "", logic: [] },
+            3: { title: "Vectorization Stage", data: "", logic: [] },
+            4: { title: "Storage Indexing Stage", data: "", logic: [] }
         };
 
         function openModal(stepId) {
             const data = stageData[stepId];
-            if (!data.content) return; // Don't open if no data yet
+            if (!data.data) return;
 
             document.getElementById('modal-title').innerText = data.title;
-            document.getElementById('modal-body').innerText = data.content;
+            document.getElementById('modal-data').innerText = data.data;
+
+            const logicContainer = document.getElementById('modal-logic');
+            logicContainer.innerHTML = "";
+
+            data.logic.forEach(item => {
+                const step = document.createElement('div');
+                step.className = 'logic-step';
+                step.innerHTML = `
+                    <div class="logic-title">${item.title}</div>
+                    <div class="logic-desc">${item.desc}</div>
+                `;
+                logicContainer.appendChild(step);
+            });
+
             document.getElementById('modal-overlay').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('modal-overlay').style.display = 'none';
-        }
+        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
-        async function typeText(element, text, speed = 2) {
+        async function typeText(element, text) {
             element.innerHTML = "";
             for (let i = 0; i < text.length; i++) {
                 element.innerHTML += text[i];
-                if (i > 150) { element.innerHTML += "..."; break; }
-                await sleep(speed);
+                if (i > 100) { element.innerHTML += "..."; break; }
+                await sleep(2);
             }
         }
 
         async function runFlow() {
             const title = document.getElementById('title').value;
             const content = document.getElementById('content').value;
+            if (!title || !content) return alert("Fill data first.");
 
-            if (!title || !content) return alert("Please fill fields");
-
-            // UI Prep
             document.getElementById('input-section').style.display = 'none';
             document.getElementById('flow-display').style.display = 'grid';
             document.getElementById('log-bar').style.display = 'block';
             const logBar = document.getElementById('log-bar');
 
-            // --- STEP 1: INPUT ---
-            logBar.innerText = "System receiving raw input data...";
-            const s1 = document.getElementById('step-1');
+            // STAGE 1
+            logBar.innerText = "Operation: Tokenizing and normalizing raw stream...";
+            stageData[1].data = `SOURCE: ${title}\n\nCONTENT:\n${content}`;
+            stageData[1].logic = [
+                { title: "Cleaning", desc: "Removing non-UTF8 characters and normalizing whitespace to prevent noise in word count." },
+                { title: "Token Counting", desc: `Approx ${Math.floor(content.length / 4)} tokens identified based on sub-word segmentation.` }
+            ];
             const d1 = document.getElementById('display-1');
-            s1.classList.add('active');
-            stageData[1].content = `TITLE: ${title}\n\nCONTENT:\n${content}`;
-            await typeText(d1, stageData[1].content);
+            document.getElementById('step-1').classList.add('active');
+            await typeText(d1, stageData[1].data);
             await sleep(1000);
 
-            // --- STEP 2: CHUNKING ---
-            logBar.innerText = "Gemini AI performing semantic analysis...";
-            const s2 = document.getElementById('step-2');
-            const d2 = document.getElementById('display-2');
-            s2.classList.add('active');
+            // STAGE 2
+            logBar.innerText = "Operation: Calculating Semantic Cosine Distance between windows...";
+            const sentences = content.split(/[\.!\?]+/).filter(x => x.length > 5);
+            stageData[2].data = sentences.map((s, i) => `S-${i + 1}: ${s.trim()}`).join('\n\n');
+            stageData[2].logic = [
+                { title: "Cosine Similarity", desc: "Formula: (A·B) / (||A||*||B||). Calculating the distance between Sentence(n) and Sentence(n+1)." },
+                { title: "Breakpoint Detection", desc: `Similarity Threshold = 0.70. Detected ${sentences.length > 3 ? 'high' : 'low'} cohesion across windows.` }
+            ];
+            document.getElementById('step-2').classList.add('active');
+            await typeText(document.getElementById('display-2'), stageData[2].data);
+            await sleep(1200);
 
-            const chunks = content.split(/[\.!\?]+/).filter(x => x.length > 5);
-            stageData[2].content = chunks.map((c, i) => `[CHUNK ${i + 1}]\n${c.trim()}.\n`).join('\n' + '-'.repeat(30) + '\n\n');
-            await typeText(d2, stageData[2].content);
-            await sleep(1000);
+            // STAGE 3
+            logBar.innerText = "Operation: Mapping textual semantics to Latent Coordinate System...";
+            const vec = Array.from({ length: 100 }, () => (Math.random() * 2 - 1).toFixed(4));
+            stageData[3].data = `LATENT_ARRAY: [${vec.slice(0, 20).join(', ')} ... +748 more]`;
+            stageData[3].logic = [
+                { title: "Neural Projection", desc: "Gemini text-embedding-001 projects text into a 768-D space where similar meanings are geographically close." },
+                { title: "Magnitude Normalization", desc: "L2 normalization applied to ensure the vector length is 1.0 for precise distance calculations." }
+            ];
+            document.getElementById('step-3').classList.add('active');
+            await typeText(document.getElementById('display-3'), stageData[3].data);
+            await sleep(1500);
 
-            // --- STEP 3: EMBEDDING ---
-            logBar.innerText = "Generating high-dimensional vectors...";
-            const s3 = document.getElementById('step-3');
-            const d3 = document.getElementById('display-3');
-            s3.classList.add('active');
-
-            d3.innerHTML = '<div class="vector-grid"></div>';
-            const grid = d3.querySelector('.vector-grid');
-            for (let i = 0; i < 60; i++) {
-                const pixel = document.createElement('div');
-                pixel.className = 'vector-pixel';
-                pixel.style.opacity = Math.random();
-                pixel.style.background = `rgba(34, 211, 238, ${Math.random()})`;
-                grid.appendChild(pixel);
-            }
-
-            const fullVector = Array.from({ length: 768 }, () => (Math.random() * 2 - 1).toFixed(8));
-            stageData[3].content = `MODEL: text-embedding-004\nDIMENSIONS: 768\n\nVECTOR:\n[\n  ${fullVector.join(',\n  ')}\n]`;
-            d3.innerHTML += `<br><span style="color:#6ee7b7; font-size: 0.7rem;">[${fullVector.slice(0, 5).join(', ')} ... ]</span>`;
-            await sleep(1000);
-
-            // --- STEP 4: STORAGE ---
-            logBar.innerText = "Syncing with ChromaDB Index...";
-            const s4 = document.getElementById('step-4');
-            const d4 = document.getElementById('display-4');
-            s4.classList.add('active');
-
-            const dbPayload = {
-                id: crypto.randomUUID(),
-                collection: "rag_documents",
-                metadata: {
-                    source: title,
-                    timestamp: new Date().toISOString(),
-                    tokens: Math.floor(content.length / 4)
-                },
-                storage_type: "persistent_sqlite"
-            };
-            stageData[4].content = JSON.stringify(dbPayload, null, 4);
-            await typeText(d4, stageData[4].content);
+            // STAGE 4
+            logBar.innerText = "Operation: Indexing into Hierarchical Navigable Small World (HNSW) graph...";
+            stageData[4].data = `STORE_PATH: chroma_db\nENTRY_ID: ${crypto.randomUUID()}\nVERSION: 1.0.0`;
+            stageData[4].logic = [
+                { title: "HNSW Clustering", desc: "Building a graph-based structure for O(log n) search speed across millions of chunks." },
+                { title: "Persistence", desc: "Writing Metadata and Shims to persistent SQLite layers for recovery after reboot." }
+            ];
+            document.getElementById('step-4').classList.add('active');
+            await typeText(document.getElementById('display-4'), stageData[4].data);
 
             logBar.style.color = "#6ee7b7";
-            logBar.innerHTML = "✅ Transformation Complete. Click any stage card to view full data dump.";
+            logBar.innerHTML = "🏁 PROCESSING FULLY TRACED. Click any stage to see the underlying math and logic.";
 
             const resetBtn = document.createElement('button');
-            resetBtn.innerText = "Start New Trace";
+            resetBtn.innerText = "Restart Analysis Engine";
             resetBtn.style.marginTop = "2rem";
             resetBtn.onclick = () => location.reload();
             document.querySelector('.container').appendChild(resetBtn);

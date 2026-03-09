@@ -4,7 +4,7 @@ A robust, modular, and scalable Retrieval-Augmented Generation (RAG) system buil
 
 ## 🚀 Features
 
-- **Gemini Powered**: Uses `gemini-2.5-flash` for high-speed generation and `text-embedding-004` (or `gemini-embedding-001`) for embeddings.
+- **Gemini Powered**: Uses `gemini-2.5-flash` for high-speed generation and `gemini-embedding-001` for embeddings.
 - **Semantic Chunking**: Intelligent document splitting that understands content meaning rather than just character counts.
 - **FastAPI Backend**: High-performance asynchronous API with automatic Swagger documentation.
 - **ChromaDB Integration**: Persistent vector storage for fast semantic similarity search.
