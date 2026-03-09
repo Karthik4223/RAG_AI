@@ -6,7 +6,8 @@ from app.schemas.rag import (
     UploadResponse, 
     DocumentChunk, 
     FeedbackRequest,
-    ManualIngestRequest
+    ManualIngestRequest,
+    IngestTraceResponse
 )
 from app.services.document_service import DocumentService
 from app.services.vector_store import VectorStoreFactory, ChromaStore
@@ -20,7 +21,10 @@ router = APIRouter()
 
 # Dependency injection
 def get_vector_store():
-    return VectorStoreFactory.get_vector_store()
+    return VectorStoreFactory.get_vector_store(collection_name="rag_documents")
+
+def get_manual_vector_store():
+    return VectorStoreFactory.get_vector_store(collection_name="manual_documents")
 
 def get_doc_service():
     return DocumentService()
@@ -60,7 +64,7 @@ async def upload_document(
 async def ingest_text(
     request: ManualIngestRequest,
     doc_service: DocumentService = Depends(get_doc_service),
-    vector_store = Depends(get_vector_store)
+    vector_store = Depends(get_manual_vector_store)
 ):
     try:
         logger.info(f"Processing manual text ingestion: {request.title}")
@@ -74,6 +78,37 @@ async def ingest_text(
         )
     except Exception as e:
         logger.error(f"Ingestion failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/trace-ingest", response_model=IngestTraceResponse)
+async def trace_ingest(
+    request: ManualIngestRequest,
+    doc_service: DocumentService = Depends(get_doc_service),
+    vector_store = Depends(get_manual_vector_store)
+):
+    try:
+        logger.info(f"Tracing ingestion for: {request.title}")
+        
+        # 1. Chunking
+        chunks = doc_service.process_text(request.title, request.content, request.metadata)
+        chunk_texts = [c.page_content for c in chunks]
+        
+        # 2. Embedding (Real call to Google API)
+        embeddings = doc_service.embeddings.embed_documents(chunk_texts)
+        
+        # 3. Storage (Actually add to DB)
+        vector_store.add_documents(chunks)
+        
+        return IngestTraceResponse(
+            title=request.title,
+            raw_content=request.content,
+            chunks=chunk_texts,
+            vectors=embeddings,
+            metadata=request.metadata or {},
+            total_chunks=len(chunks)
+        )
+    except Exception as e:
+        logger.error(f"Trace ingestion failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/query", response_model=QueryResponse)

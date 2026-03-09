@@ -55,7 +55,6 @@
             max-width: 1200px;
         }
 
-        /* Input Form */
         .config-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -112,7 +111,6 @@
             transform: scale(1.01);
         }
 
-        /* Visual Flow Layout */
         .flow-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -195,7 +193,6 @@
             display: inline-block;
         }
 
-        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -265,20 +262,6 @@
             white-space: pre-wrap;
         }
 
-        .formula-card {
-            background: rgba(99, 102, 241, 0.05);
-            border: 1px dashed var(--primary);
-            padding: 1.5rem;
-            border-radius: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .formula-text {
-            font-style: italic;
-            color: #818cf8;
-            margin-bottom: 1rem;
-        }
-
         .logic-step {
             margin-bottom: 1rem;
             border-left: 3px solid var(--secondary);
@@ -321,6 +304,19 @@
             display: none;
             border: 1px solid var(--border);
         }
+
+        .vector-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+        }
+
+        .vector-pixel {
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 1px;
+        }
     </style>
 </head>
 
@@ -349,7 +345,7 @@
         <div class="flow-container" id="flow-display">
             <!-- Stage 1 -->
             <div class="step-card" id="step-1" onclick="openModal(1)">
-                <div class="step-icon">�</div>
+                <div class="step-icon">📄</div>
                 <div class="step-title">1. Tokenization</div>
                 <div class="logic-hint">OP: Text Cleaning</div>
                 <div class="data-display" id="display-1">---</div>
@@ -367,7 +363,7 @@
 
             <!-- Stage 3 -->
             <div class="step-card" id="step-3" onclick="openModal(3)">
-                <div class="step-icon">�</div>
+                <div class="step-icon">🧬</div>
                 <div class="step-title">3. Vectorization</div>
                 <div class="logic-hint">OP: Latent Mapping</div>
                 <div class="data-display" id="display-3">---</div>
@@ -395,12 +391,10 @@
                 <button class="close-btn" onclick="closeModal()">×</button>
             </div>
             <div class="modal-grid">
-                <!-- Left: Result Data -->
                 <div class="modal-section" style="border-right: 1px solid var(--border);">
                     <h3>🚀 Transformed Data</h3>
                     <div class="data-stream" id="modal-data"></div>
                 </div>
-                <!-- Right: Logic/Formulas -->
                 <div class="modal-section">
                     <h3>⚙️ Internal Operations</h3>
                     <div id="modal-logic"></div>
@@ -422,23 +416,16 @@
         function openModal(stepId) {
             const data = stageData[stepId];
             if (!data.data) return;
-
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-data').innerText = data.data;
-
             const logicContainer = document.getElementById('modal-logic');
             logicContainer.innerHTML = "";
-
             data.logic.forEach(item => {
                 const step = document.createElement('div');
                 step.className = 'logic-step';
-                step.innerHTML = `
-                    <div class="logic-title">${item.title}</div>
-                    <div class="logic-desc">${item.desc}</div>
-                `;
+                step.innerHTML = `<div class="logic-title">${item.title}</div><div class="logic-desc">${item.desc}</div>`;
                 logicContainer.appendChild(step);
             });
-
             document.getElementById('modal-overlay').style.display = 'flex';
         }
 
@@ -448,8 +435,8 @@
             element.innerHTML = "";
             for (let i = 0; i < text.length; i++) {
                 element.innerHTML += text[i];
-                if (i > 100) { element.innerHTML += "..."; break; }
-                await sleep(2);
+                if (i > 150) { element.innerHTML += "..."; break; }
+                await sleep(1);
             }
         }
 
@@ -463,57 +450,89 @@
             document.getElementById('log-bar').style.display = 'block';
             const logBar = document.getElementById('log-bar');
 
-            // STAGE 1
-            logBar.innerText = "Operation: Tokenizing and normalizing raw stream...";
-            stageData[1].data = `SOURCE: ${title}\n\nCONTENT:\n${content}`;
-            stageData[1].logic = [
-                { title: "Cleaning", desc: "Removing non-UTF8 characters and normalizing whitespace to prevent noise in word count." },
-                { title: "Token Counting", desc: `Approx ${Math.floor(content.length / 4)} tokens identified based on sub-word segmentation.` }
-            ];
-            const d1 = document.getElementById('display-1');
-            document.getElementById('step-1').classList.add('active');
-            await typeText(d1, stageData[1].data);
-            await sleep(1000);
+            try {
+                logBar.innerText = "Operation: Initiating real-time ingestion trace...";
 
-            // STAGE 2
-            logBar.innerText = "Operation: Calculating Semantic Cosine Distance between windows...";
-            const sentences = content.split(/[\.!\?]+/).filter(x => x.length > 5);
-            stageData[2].data = sentences.map((s, i) => `S-${i + 1}: ${s.trim()}`).join('\n\n');
-            stageData[2].logic = [
-                { title: "Cosine Similarity", desc: "Formula: (A·B) / (||A||*||B||). Calculating the distance between Sentence(n) and Sentence(n+1)." },
-                { title: "Breakpoint Detection", desc: `Similarity Threshold = 0.70. Detected ${sentences.length > 3 ? 'high' : 'low'} cohesion across windows.` }
-            ];
-            document.getElementById('step-2').classList.add('active');
-            await typeText(document.getElementById('display-2'), stageData[2].data);
-            await sleep(1200);
+                const response = await fetch('/api/v1/trace-ingest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
 
-            // STAGE 3
-            logBar.innerText = "Operation: Mapping textual semantics to Latent Coordinate System...";
-            const vec = Array.from({ length: 100 }, () => (Math.random() * 2 - 1).toFixed(4));
-            stageData[3].data = `LATENT_ARRAY: [${vec.slice(0, 20).join(', ')} ... +748 more]`;
-            stageData[3].logic = [
-                { title: "Neural Projection", desc: "Gemini text-embedding-001 projects text into a 768-D space where similar meanings are geographically close." },
-                { title: "Magnitude Normalization", desc: "L2 normalization applied to ensure the vector length is 1.0 for precise distance calculations." }
-            ];
-            document.getElementById('step-3').classList.add('active');
-            await typeText(document.getElementById('display-3'), stageData[3].data);
-            await sleep(1500);
+                if (!response.ok) throw new Error("Backend processing failed");
+                const result = await response.json();
 
-            // STAGE 4
-            logBar.innerText = "Operation: Indexing into Hierarchical Navigable Small World (HNSW) graph...";
-            stageData[4].data = `STORE_PATH: chroma_db\nENTRY_ID: ${crypto.randomUUID()}\nVERSION: 1.0.0`;
-            stageData[4].logic = [
-                { title: "HNSW Clustering", desc: "Building a graph-based structure for O(log n) search speed across millions of chunks." },
-                { title: "Persistence", desc: "Writing Metadata and Shims to persistent SQLite layers for recovery after reboot." }
-            ];
-            document.getElementById('step-4').classList.add('active');
-            await typeText(document.getElementById('display-4'), stageData[4].data);
+                // STAGE 1
+                logBar.innerText = "Operation: Tokenizing and normalizing raw stream...";
+                stageData[1].data = `SOURCE: ${result.title}\n\nCONTENT:\n${result.raw_content}`;
+                stageData[1].logic = [
+                    { title: "Cleaning", desc: "Removing non-UTF8 characters and normalizing whitespace." },
+                    { title: "Token Counting", desc: `Detected ~${Math.floor(result.raw_content.length / 4)} tokens.` }
+                ];
+                document.getElementById('step-1').classList.add('active');
+                await typeText(document.getElementById('display-1'), stageData[1].data);
+                await sleep(800);
 
-            logBar.style.color = "#6ee7b7";
-            logBar.innerHTML = "🏁 PROCESSING FULLY TRACED. Click any stage to see the underlying math and logic.";
+                // STAGE 2
+                logBar.innerText = "Operation: Extracting semantic chunk boundaries via Gemini...";
+                stageData[2].data = result.chunks.map((c, i) => `[CHUNK ${i + 1}]\n${c}`).join('\n\n---\n\n');
+                stageData[2].logic = [
+                    { title: "Semantic Splitting", desc: "Using Gemini Embeddings to detect high-entropy shifts in topic." },
+                    { title: "Result", desc: `Successfully derived ${result.total_chunks} logical segments.` }
+                ];
+                document.getElementById('step-2').classList.add('active');
+                await typeText(document.getElementById('display-2'), stageData[2].data);
+                await sleep(800);
+
+                // STAGE 3
+                logBar.innerText = "Operation: Retrieving absolute coordinates from Latent Space...";
+                const firstVec = result.vectors[0];
+                stageData[3].data = `MODEL: gemini-embedding-001\nDIM: ${firstVec.length}\n\nVECTOR:\n[${firstVec.join(', ')}]`;
+                stageData[3].logic = [
+                    { title: "Google API Call", desc: "Received high-precision floating point vectors representing concept clusters." },
+                    { title: "L2 Norm", desc: "Vectors normalized to unit length for cosine similarity arithmetic." }
+                ];
+                document.getElementById('step-3').classList.add('active');
+
+                const d3 = document.getElementById('display-3');
+                d3.innerHTML = '<div class="vector-grid"></div>';
+                const grid = d3.querySelector('.vector-grid');
+                for (let i = 0; i < 60; i++) {
+                    const pixel = document.createElement('div');
+                    pixel.className = 'vector-pixel';
+                    pixel.style.opacity = Math.random();
+                    pixel.style.background = `rgba(34, 211, 238, ${Math.random()})`;
+                    grid.appendChild(pixel);
+                }
+                d3.innerHTML += `<br><span style="color:#6ee7b7; font-size: 0.7rem;">[${firstVec.slice(0, 5).join(', ')} ... ]</span>`;
+                await sleep(1000);
+
+                // STAGE 4
+                logBar.innerText = "Operation: Persisting HNSW graph and Metadata to ChromaDB...";
+                const dbInfo = {
+                    status: "COMMITTED",
+                    index: "HNSW",
+                    chunks: result.total_chunks,
+                    metadata: result.metadata
+                };
+                stageData[4].data = JSON.stringify(dbInfo, null, 2);
+                stageData[4].logic = [
+                    { title: "Graph Update", desc: "Inter-chunk connections updated in the Hierarchical Navigable Small World map." },
+                    { title: "Persistence", desc: "Serialized to SQLite file at ./data/chroma_db." }
+                ];
+                document.getElementById('step-4').classList.add('active');
+                await typeText(document.getElementById('display-4'), stageData[4].data);
+
+                logBar.style.color = "#6ee7b7";
+                logBar.innerHTML = "✅ LIVE INGESTION TRACE COMPLETE. Click cards for deep metadata.";
+
+            } catch (err) {
+                logBar.style.color = "#fb7185";
+                logBar.innerText = "❌ ERROR: " + err.message;
+            }
 
             const resetBtn = document.createElement('button');
-            resetBtn.innerText = "Restart Analysis Engine";
+            resetBtn.innerText = "Run Another Trace";
             resetBtn.style.marginTop = "2rem";
             resetBtn.onclick = () => location.reload();
             document.querySelector('.container').appendChild(resetBtn);

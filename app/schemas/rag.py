@@ -31,3 +31,11 @@ class ManualIngestRequest(BaseModel):
     title: str = Field(..., example="Project Alpha Overview")
     content: str = Field(..., example="This is the content of Project Alpha...")
     metadata: Optional[Dict[str, Any]] = None
+
+class IngestTraceResponse(BaseModel):
+    title: str
+    raw_content: str
+    chunks: List[str]
+    vectors: List[List[float]]
+    metadata: Dict[str, Any]
+    total_chunks: int

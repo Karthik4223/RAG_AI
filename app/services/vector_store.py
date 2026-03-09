@@ -17,14 +17,14 @@ class BaseVectorStore(ABC):
 
 class VectorStoreFactory:
     @staticmethod
-    def get_vector_store() -> BaseVectorStore:
+    def get_vector_store(collection_name: str = "rag_documents") -> BaseVectorStore:
         embeddings = GoogleGenerativeAIEmbeddings(
             google_api_key=settings.GOOGLE_API_KEY, 
             model=settings.GEMINI_EMBEDDING_MODEL
         )
         
         if settings.VECTOR_STORE_TYPE == "chroma":
-            return ChromaStore(embeddings)
+            return ChromaStore(embeddings, collection_name=collection_name)
         elif settings.VECTOR_STORE_TYPE == "pinecone":
             # Implementation for Pinecone would go here
             # return PineconeStore(embeddings)
@@ -33,14 +33,14 @@ class VectorStoreFactory:
             raise ValueError(f"Unsupported vector store type: {settings.VECTOR_STORE_TYPE}")
 
 class ChromaStore(BaseVectorStore):
-    def __init__(self, embeddings):
+    def __init__(self, embeddings, collection_name: str = "rag_documents"):
         self.embeddings = embeddings
         self.db = LangChainChroma(
             persist_directory=settings.CHROMA_PERSIST_DIRECTORY,
             embedding_function=self.embeddings,
-            collection_name="rag_documents"
+            collection_name=collection_name
         )
-        logger.info(f"Initialized ChromaDB at {settings.CHROMA_PERSIST_DIRECTORY}")
+        logger.info(f"Initialized ChromaDB at {settings.CHROMA_PERSIST_DIRECTORY} with collection {collection_name}")
 
     def add_documents(self, documents: List[Any]):
         try:

@@ -12,8 +12,8 @@ from app.core.logging import logger
 # Ensure environment variables are loaded
 load_dotenv()
 
-def inspect_chroma():
-    print("--- ChromaDB Internal Inspection ---\n")
+def inspect_chroma(collection_name="rag_documents"):
+    print(f"--- ChromaDB Internal Inspection [{collection_name}] ---\n")
     
     # 1. Initialize the same embedding function
     embeddings = GoogleGenerativeAIEmbeddings(
@@ -25,7 +25,7 @@ def inspect_chroma():
     db = Chroma(
         persist_directory=settings.CHROMA_PERSIST_DIRECTORY,
         embedding_function=embeddings,
-        collection_name="rag_documents"
+        collection_name=collection_name
     )
 
     # 3. Use .get() to retrieve stored items
@@ -60,4 +60,5 @@ def inspect_chroma():
     print("\n" + "="*50 + "\n")
 
 if __name__ == "__main__":
-    inspect_chroma()
+    collection = sys.argv[1] if len(sys.argv) > 1 else "rag_documents"
+    inspect_chroma(collection)
