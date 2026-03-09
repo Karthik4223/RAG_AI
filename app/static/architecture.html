@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Ecosystem Architecture | Gemini AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --bg: #030712;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
+            --subtext: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 40%);
+            overflow: hidden;
+        }
+
+        /* Nav & Header */
+        .top-bar {
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .nav-link {
+            color: var(--subtext);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover {
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+
+        .brand p {
+            font-size: 0.7rem;
+            color: var(--subtext);
+            text-transform: uppercase;
+        }
+
+        /* The Ecosystem Stage */
+        .stage-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #rag-stage {
+            position: relative;
+            width: 1000px;
+            height: 600px;
+        }
+
+        /* Node Styling */
+        .node {
+            position: absolute;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            z-index: 10;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .node h3 {
+            font-size: 0.9rem;
+            margin: 0.5rem 0 0.25rem;
+            color: white;
+        }
+
+        .node p {
+            font-size: 0.7rem;
+            color: var(--subtext);
+        }
+
+        .node .icon {
+            font-size: 1.75rem;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            margin-bottom: 0.25rem;
+        }
+
+        .node.active {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .node.engine {
+            background: linear-gradient(135deg, #1e1b4b, #030712);
+            border-width: 2px;
+        }
+
+        /* Positioning - Grid Based Logic but absolute for SVG ease */
+        #node-source {
+            top: 10%;
+            left: 0%;
+        }
+
+        #node-embedding {
+            top: 10%;
+            left: 35%;
+        }
+
+        #node-vault {
+            top: 40%;
+            left: 70%;
+            width: 220px;
+            border-style: dashed;
+        }
+
+        #node-user {
+            bottom: 10%;
+            left: 0%;
+        }
+
+        #node-search {
+            bottom: 10%;
+            left: 35%;
+        }
+
+        #node-gemini {
+            bottom: 10%;
+            left: 70%;
+            width: 220px;
+        }
+
+        #node-output {
+            bottom: 10%;
+            left: 95%;
+            width: 120px;
+        }
+
+        /* Connections */
+        svg.connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .path-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.03);
+            stroke-width: 4;
+        }
+
+        .path-active {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 1.5;
+            stroke-dasharray: 8, 4;
+            animation: dash 20s linear infinite;
+            opacity: 0.2;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -400;
+            }
+        }
+
+        .data-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 15px var(--primary);
+            display: none;
+            z-index: 20;
+        }
+
+        /* Dashboard & Controls */
+        .bottom-shelf {
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .status-pill {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            padding: 0.75rem 2rem;
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--subtext);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #475569;
+        }
+
+        .status-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .cta-btn {
+            background: linear-gradient(to right, var(--primary), #4f46e5);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Labels for Sections */
+        .section-label {
+            position: absolute;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        #label-ingest {
+            top: 0;
+            left: 0;
+        }
+
+        #label-retrieve {
+            bottom: 0;
+            left: 0;
+        }
+
+        @media (max-width: 1100px) {
+            #rag-stage {
+                transform: scale(0.8);
+                transform-origin: center;
+            }
+        }
+
+        @media (max-width: 800px) {
+            #rag-stage {
+                transform: scale(0.6);
+            }
+
+            .nav {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="top-bar">
+        <nav class="nav">
+            <a href="/visualize" class="nav-link">Ingestion</a>
+            <a href="/visualize-query" class="nav-link">Retrieval</a>
+            <a href="/architecture" class="nav-link active">Ecosystem</a>
+        </nav>
+
+        <div class="top-actions" style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="status-pill"
+                style="padding: 0.5rem 1.25rem; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 50px; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text">Ready to trace neural activity</span>
+            </div>
+
+            <button id="run-btn" class="cta-btn" onclick="startFlow()"
+                style="padding: 0.6rem 1.5rem; font-size: 0.85rem; border-radius: 50px;">▶ Start Visualization</button>
+
+            <div class="brand" style="text-align: right; border-left: 1px solid var(--border); padding-left: 1.5rem;">
+                <h1>RAG ARCHITECTURE</h1>
+                <p>Intelligence Pipeline v2.0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stage-container">
+        <div id="rag-stage">
+            <div id="label-ingest" class="section-label">Phase 1: Saving Your Knowledge</div>
+            <div id="label-retrieve" class="section-label">Phase 2: Finding and Answering</div>
+
+            <svg class="connections">
+                <!-- Ingestion Lines -->
+                <path id="p1" class="path-bg" d="M 180 100 L 350 100" />
+                <path id="p2" class="path-bg" d="M 530 100 C 650 100 650 250 700 300" />
+
+                <!-- Retrieval Lines -->
+                <path id="p3" class="path-bg" d="M 180 500 L 350 500" />
+                <path id="p4" class="path-bg" d="M 450 450 C 450 350 600 350 700 350" /> <!-- To Vault -->
+                <path id="p5" class="path-bg" d="M 800 350 L 800 450" /> <!-- Vault to LLM -->
+                <path id="p6" class="path-bg" d="M 530 500 L 700 500" /> <!-- Query to LLM -->
+                <path id="p7" class="path-bg" d="M 920 500 L 950 500" /> <!-- LLM to Output -->
+
+                <!-- Active Paths (Overlays) -->
+                <path id="ap1" class="path-active" d="M 180 100 L 350 100" />
+                <path id="ap2" class="path-active" d="M 530 100 C 650 100 650 250 700 300" />
+                <path id="ap3" class="path-active" d="M 180 500 L 350 500" />
+                <path id="ap4" class="path-active" d="M 450 450 C 450 350 600 350 700 350" />
+                <path id="ap5" class="path-active" d="M 800 350 L 800 450" />
+                <path id="ap6" class="path-active" d="M 530 500 L 700 500" />
+                <path id="ap7" class="path-active" d="M 920 500 L 950 500" />
+            </svg>
+
+            <!-- Ingestion Nodes -->
+            <div class="node" id="node-source">
+                <div class="icon">📁</div>
+                <h3>My Documents</h3>
+                <p>PDFs, Notes, Files</p>
+            </div>
+
+            <div class="node" id="node-embedding">
+                <div class="icon">🪄</div>
+                <h3>Vector Maker</h3>
+                <p>Turning Text to Math</p>
+            </div>
+
+            <div class="node" id="node-vault" style="top: 250px; left: 700px;">
+                <div class="icon">🛡️</div>
+                <h3>Knowledge Vault</h3>
+                <p>Secure Storage</p>
+            </div>
+
+            <!-- Retrieval Nodes -->
+            <div class="node" id="node-user">
+                <div class="icon">💬</div>
+                <h3>User Question</h3>
+                <p>What do you want to know?</p>
+            </div>
+
+            <div class="node" id="node-search">
+                <div class="icon">🔦</div>
+                <h3>Vault Search</h3>
+                <p>Finding the Right Info</p>
+            </div>
+
+            <div class="node engine" id="node-gemini" style="bottom: 50px; left: 690px;">
+                <div class="icon">♊</div>
+                <h3 style="color: var(--primary);">AI Brain</h3>
+                <p>Thinking & Reasoning</p>
+            </div>
+
+            <div class="node" id="node-output" style="bottom: 50px; left: 950px; width: 150px;">
+                <div class="icon">✨</div>
+                <h3>Final Answer</h3>
+                <p>Clear, Accurate Reply</p>
+            </div>
+
+            <div id="dot" class="data-dot"></div>
+        </div>
+    </div>
+
+    <!-- Removed bottom-shelf as controls are now in top-bar -->
+
+    <script>
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        const dot = document.getElementById('dot');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('status-dot');
+
+        function updateStatus(text, active = true) {
+            statusText.innerText = text;
+            if (active) statusDot.classList.add('active');
+            else statusDot.classList.remove('active');
+        }
+
+        async function animatePacket(pathId, duration = 800) {
+            const path = document.getElementById(pathId);
+            const length = path.getTotalLength();
+            dot.style.display = 'block';
+
+            return new Promise(resolve => {
+                let start = null;
+                function step(time) {
+                    if (!start) start = time;
+                    const progress = (time - start) / duration;
+                    if (progress < 1) {
+                        const pt = path.getPointAtLength(progress * length);
+                        dot.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
+                        requestAnimationFrame(step);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        async function startFlow() {
+            document.getElementById('run-btn').style.display = 'none';
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(n => n.classList.remove('active'));
+
+            // 1. Ingestion
+            updateStatus("PHASE 1: Reading your documents...");
+            document.getElementById('node-source').classList.add('active');
+            await sleep(1000);
+
+            updateStatus("CONVERTING: Changing words into machine-readable vectors");
+            await animatePacket('p1');
+            document.getElementById('node-embedding').classList.add('active');
+            await sleep(800);
+
+            updateStatus("SAVING: Storing your knowledge in the secure Vault");
+            await animatePacket('p2', 1200);
+            document.getElementById('node-vault').classList.add('active');
+            await sleep(1500);
+
+            // Transition
+            nodes.forEach(n => n.classList.remove('active'));
+            dot.style.display = 'none';
+            await sleep(500);
+
+            // 2. Retrieval
+            updateStatus("PHASE 2: Receiving your question...");
+            document.getElementById('node-user').classList.add('active');
+            await sleep(800);
+
+            updateStatus("SEARCHING: Looking through the Vault for the best info");
+            await animatePacket('p3');
+            document.getElementById('node-search').classList.add('active');
+            await sleep(600);
+
+            updateStatus("FINDING: Extracting relevant facts");
+            dot.style.background = "var(--secondary)";
+            await animatePacket('p4', 1000);
+            await sleep(500);
+
+            updateStatus("THINKING: Sending facts to the AI Brain");
+            await animatePacket('p5', 800);
+            await animatePacket('p6', 800);
+            document.getElementById('node-gemini').classList.add('active');
+            await sleep(1500);
+
+            updateStatus("ANSWERING: Creating your final clear response");
+            await animatePacket('p7', 800);
+            document.getElementById('node-output').classList.add('active');
+
+            updateStatus("DONE! Process Complete", false);
+
+            const runBtn = document.getElementById('run-btn');
+            runBtn.innerText = "↺ Restart Visualization";
+            runBtn.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

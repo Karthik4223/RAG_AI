@@ -41,6 +41,11 @@ async def get_query_visualizer():
     with open("app/static/query_visualizer.html", "r") as f:
         return f.read()
 
+@app.get("/architecture", response_class=HTMLResponse)
+async def get_architecture():
+    with open("app/static/architecture.html", "r") as f:
+        return f.read()
+
 @app.get("/")
 async def root():
     return {"message": f"Welcome to {settings.PROJECT_NAME}", "version": "1.0.0"}
