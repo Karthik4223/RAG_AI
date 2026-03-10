@@ -30,4 +30,5 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# We use the shell form to allow the $PORT variable to be expanded
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
