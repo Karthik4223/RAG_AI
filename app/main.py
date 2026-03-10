@@ -52,9 +52,38 @@ async def get_architecture():
     with open("app/static/architecture.html", "r") as f:
         return f.read()
 
-@app.get("/")
+@app.get("/chat", response_class=HTMLResponse)
+async def get_chat():
+    with open("app/static/chat.html", "r") as f:
+        return f.read()
+
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    return {"message": f"Welcome to {settings.PROJECT_NAME}", "version": "1.0.0"}
+    return """
+    <html>
+        <head>
+            <title>RAG AI Ecosystem</title>
+            <style>
+                body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #030712; color: #f8fafc; }
+                .card { background: #0f172a; padding: 2rem; border-radius: 1rem; border: 1px solid #1e293b; text-align: center; }
+                a { color: #6366f1; text-decoration: none; display: block; margin: 0.5rem 0; font-weight: bold; }
+                a:hover { text-decoration: underline; }
+                h1 { color: #6366f1; }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h1>Gemini RAG Ecosystem</h1>
+                <p>Welcome to the production-ready RAG system.</p>
+                <a href="/chat">🚀 Live Semantic Chat</a>
+                <a href="/architecture">🏗️ Architecture Visualization</a>
+                <a href="/visualize">🧪 Ingestion Trace</a>
+                <a href="/visualize-query">🔍 Query Trace</a>
+                <a href="/docs">📜 API Documentation</a>
+            </div>
+        </body>
+    </html>
+    """
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
