@@ -10,7 +10,13 @@ import uvicorn
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    debug=settings.DEBUG
+    debug=settings.DEBUG,
+    version="1.0.0",
+    description="A production-ready RAG system powered by Google Gemini 2.5 Flash.",
+    contact={
+        "name": "Karthik",
+        "url": "https://github.com/Karthik4223/RAG_AI",
+    }
 )
 
 # Set all CORS enabled origins

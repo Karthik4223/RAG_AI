@@ -23,9 +23,11 @@ class VectorStoreFactory:
             model=settings.GEMINI_EMBEDDING_MODEL
         )
         
-        if settings.VECTOR_STORE_TYPE == "chroma":
+        vs_type = settings.VECTOR_STORE_TYPE.lower().strip()
+        
+        if vs_type == "chroma":
             return ChromaStore(embeddings, collection_name=collection_name)
-        elif settings.VECTOR_STORE_TYPE == "pinecone":
+        elif vs_type == "pinecone":
             # Implementation for Pinecone would go here
             # return PineconeStore(embeddings)
             raise NotImplementedError("Pinecone integration not implemented yet in this demo")
