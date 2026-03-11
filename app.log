@@ -1,0 +1,305 @@
+nohup: ignoring input
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Will watch for changes in these directories: ['/home/developer/RAG']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [37522] using WatchFiles
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [37544]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:47524 - "GET /chat HTTP/1.1" 200 OK
+2026-03-11 15:43:22 | INFO     | app.services.vector_store:__init__:45 - Initialized ChromaDB at ./data/chroma_db with collection rag_documents
+2026-03-11 15:43:22 | INFO     | app.services.llama_index_service:__init__:37 - Initialized LlamaIndex with collection: rag_documents
+2026-03-11 15:43:22 | INFO     | app.api.routes:upload_document:57 - Indexing in LangChain: sdk_ring.pdf
+2026-03-11 15:43:22 | INFO     | app.services.document_service:process_file:42 - Loaded document sdk_ring.pdf with 41 pages/sections
+2026-03-11 15:43:22 | INFO     | app.services.document_service:chunk_documents:55 - Initializing SemanticChunker...
+2026-03-11 15:43:32 | INFO     | app.services.document_service:chunk_documents:70 - Split documents into 47 semantic chunks
+2026-03-11 15:43:35 | INFO     | app.services.vector_store:add_documents:50 - Added 47 document chunks to ChromaDB
+2026-03-11 15:43:35 | INFO     | app.api.routes:upload_document:61 - Indexing in LlamaIndex: sdk_ring.pdf
+2026-03-11 15:43:35 | INFO     | app.services.llama_index_service:process_file:45 - LlamaIndex: Processing file sdk_ring.pdf
+2026-03-11 15:43:40 | ERROR    | app.services.llama_index_service:process_file:61 - LlamaIndex ingestion failed for sdk_ring.pdf: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/embed_content_free_tier_requests, limit: 100, model: gemini-embedding-1.0
+Please retry in 19.761560268s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/embed_content_free_tier_requests"
+  quota_id: "EmbedContentRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-embedding-1.0"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 100
+}
+, retry_delay {
+  seconds: 19
+}
+]
+2026-03-11 15:43:40 | ERROR    | app.api.routes:upload_document:73 - Upload failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/embed_content_free_tier_requests, limit: 100, model: gemini-embedding-1.0
+Please retry in 19.761560268s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/embed_content_free_tier_requests"
+  quota_id: "EmbedContentRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-embedding-1.0"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 100
+}
+, retry_delay {
+  seconds: 19
+}
+]
+INFO:     127.0.0.1:47536 - "POST /api/v1/upload HTTP/1.1" 500 Internal Server Error
+2026-03-11 15:45:54 | INFO     | app.services.vector_store:__init__:45 - Initialized ChromaDB at ./data/chroma_db with collection rag_documents
+2026-03-11 15:45:54 | INFO     | app.services.llama_index_service:__init__:37 - Initialized LlamaIndex with collection: rag_documents
+2026-03-11 15:45:54 | INFO     | app.api.routes:upload_document:57 - Indexing in LangChain: Best-Resume-Template.pdf
+2026-03-11 15:45:54 | INFO     | app.services.document_service:process_file:42 - Loaded document Best-Resume-Template.pdf with 1 pages/sections
+2026-03-11 15:45:54 | INFO     | app.services.document_service:chunk_documents:55 - Initializing SemanticChunker...
+2026-03-11 15:45:56 | INFO     | app.services.document_service:chunk_documents:70 - Split documents into 2 semantic chunks
+2026-03-11 15:45:57 | INFO     | app.services.vector_store:add_documents:50 - Added 2 document chunks to ChromaDB
+2026-03-11 15:45:57 | INFO     | app.api.routes:upload_document:61 - Indexing in LlamaIndex: Best-Resume-Template.pdf
+2026-03-11 15:45:57 | INFO     | app.services.llama_index_service:process_file:45 - LlamaIndex: Processing file Best-Resume-Template.pdf
+2026-03-11 15:45:58 | INFO     | app.services.llama_index_service:process_file:58 - LlamaIndex: Ingested 1 document nodes from Best-Resume-Template.pdf
+INFO:     127.0.0.1:43722 - "POST /api/v1/upload HTTP/1.1" 200 OK
+2026-03-11 15:46:11 | INFO     | app.services.vector_store:__init__:45 - Initialized ChromaDB at ./data/chroma_db with collection rag_documents
+2026-03-11 15:46:11 | DEBUG    | app.services.vector_store:similarity_search_with_score:61 - Rank 1: Score 0.6751 | Content: Test is done by tester...
+2026-03-11 15:46:11 | DEBUG    | app.services.vector_store:similarity_search_with_score:61 - Rank 2: Score 0.6145 | Content: A 
+problem-solver who combines creativity with dat...
+2026-03-11 15:46:11 | DEBUG    | app.services.vector_store:similarity_search_with_score:61 - Rank 3: Score 0.6108 | Content: A 
+problem -solver who combines creativity with da...
+2026-03-11 15:46:11 | INFO     | app.services.vector_store:similarity_search_with_score:65 - Filtered 3 results above threshold 0.1 (Top score: 0.6751279191400262)
+2026-03-11 15:46:11 | INFO     | app.services.llm_service:generate_answer:34 - Generating answer for query: what is my name...
+2026-03-11 15:46:13 | INFO     | app.api.routes:query_rag:218 - Query: what is my name | Response ID: 13961dad-526d-4c7f-b773-dd59c79321a7
+INFO:     127.0.0.1:36660 - "POST /api/v1/query HTTP/1.1" 200 OK
+2026-03-11 15:46:29 | INFO     | app.services.llama_index_service:__init__:37 - Initialized LlamaIndex with collection: rag_documents
+2026-03-11 15:46:29 | INFO     | app.services.llama_index_service:query:67 - LlamaIndex: Querying for 'what is my name...'
+INFO:     127.0.0.1:50184 - "POST /api/v1/llama-index/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55268 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55268 - "GET /api/v1/openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55276 - "GET / HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/services/llm_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [37544]
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [39057]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:59066 - "GET /comparison HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59072 - "GET /comparison HTTP/1.1" 200 OK
+2026-03-11 15:48:30 | INFO     | app.services.llama_index_service:__init__:37 - Initialized LlamaIndex with collection: rag_documents
+2026-03-11 15:48:30 | INFO     | app.services.document_service:chunk_documents:55 - Initializing SemanticChunker...
+2026-03-11 15:48:30 | INFO     | app.services.document_service:chunk_documents:70 - Split documents into 1 semantic chunks
+INFO:     127.0.0.1:59072 - "POST /api/v1/trace-comparison HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/services/llama_index_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39057]
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [39232]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/document_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39232]
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [39308]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/document_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39308]
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [39361]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/llama_index_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39361]
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+WARNING:  WatchFiles detected changes in 'app/services/document_service.py'. Reloading...
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+WARNING:  WatchFiles detected changes in 'app/services/llm_service.py'. Reloading...
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [39473]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/llama_index_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39473]
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 244, in prepare
+    _fixup_main_from_name(data['init_main_from_name'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 268, in _fixup_main_from_name
+    main_content = runpy.run_module(mod_name,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 226, in run_module
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/developer/RAG/app/main.py", line 5, in <module>
+    from app.api.routes import router
+  File "/home/developer/RAG/app/api/routes.py", line 19, in <module>
+    from app.services.llama_index_service import LlamaIndexService
+  File "/home/developer/RAG/app/services/llama_index_service.py", line 41
+    def process_file(self, file_path: str, filename: str) -> int:
+                                                                 ^
+IndentationError: unindent does not match any outer indentation level
+WARNING:  WatchFiles detected changes in 'app/api/routes.py'. Reloading...
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 244, in prepare
+    _fixup_main_from_name(data['init_main_from_name'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 268, in _fixup_main_from_name
+    main_content = runpy.run_module(mod_name,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 226, in run_module
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/developer/RAG/app/main.py", line 5, in <module>
+    from app.api.routes import router
+  File "/home/developer/RAG/app/api/routes.py", line 19, in <module>
+    from app.services.llama_index_service import LlamaIndexService
+  File "/home/developer/RAG/app/services/llama_index_service.py", line 41
+    def process_file(self, file_path: str, filename: str) -> int:
+                                                                 ^
+IndentationError: unindent does not match any outer indentation level
+WARNING:  WatchFiles detected changes in 'app/services/llama_index_service.py'. Reloading...
+/home/developer/RAG/venv/lib/python3.12/site-packages/langchain_google_genai/_enums.py:1: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  from google.generativeai.types.safety_types import (  # type: ignore
+INFO:     Started server process [39867]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:54082 - "GET /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54082 - "GET /chat HTTP/1.1" 200 OK
