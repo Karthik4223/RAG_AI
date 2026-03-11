@@ -14,3 +14,7 @@ tiktoken==0.6.0
 langchain-experimental==0.0.54
 loguru==0.7.2
 python-multipart==0.0.9
+llama-index
+llama-index-llms-gemini
+llama-index-embeddings-gemini
+llama-index-vector-stores-chroma

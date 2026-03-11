@@ -52,6 +52,11 @@ async def get_architecture():
     with open("app/static/architecture.html", "r") as f:
         return f.read()
 
+@app.get("/comparison", response_class=HTMLResponse)
+async def get_comparison():
+    with open("app/static/comparison.html", "r") as f:
+        return f.read()
+
 @app.get("/chat", response_class=HTMLResponse)
 async def get_chat():
     with open("app/static/chat.html", "r") as f:
@@ -73,10 +78,11 @@ async def root():
         </head>
         <body>
             <div class="card">
-                <h1>Gemini RAG Ecosystem</h1>
+                <h1>Explore RAG</h1>
                 <p>Welcome to the production-ready RAG system.</p>
                 <a href="/chat">🚀 Live Semantic Chat</a>
                 <a href="/architecture">🏗️ Architecture Visualization</a>
+                <a href="/comparison">📊 LangChain vs LlamaIndex</a>
                 <a href="/visualize">🧪 Ingestion Trace</a>
                 <a href="/visualize-query">🔍 Query Trace</a>
                 <a href="/docs">📜 API Documentation</a>
@@ -86,4 +92,4 @@ async def root():
     """
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

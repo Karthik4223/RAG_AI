@@ -46,4 +46,18 @@ class QueryTraceResponse(BaseModel):
     retrieved_chunks: List[DocumentChunk]
     llm_prompt: str
     llm_answer: str
+    llm_answer: str
     total_time_ms: float
+
+class ComparisonTraceRequest(BaseModel):
+    text: str = Field(..., example="Hi How are u how was your day")
+
+class TraceStep(BaseModel):
+    title: str
+    summary: str
+    output: str
+    description: str
+
+class ComparisonTraceResponse(BaseModel):
+    langchain: List[TraceStep]
+    llamaindex: List[TraceStep]

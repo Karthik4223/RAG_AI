@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallel Logic Trace | RAG AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --lc-color: #6366f1;
+            --li-color: #ec4899;
+            --bg: #030712;
+            --card-bg: rgba(15, 23, 42, 0.4);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+        }
+
+        /* Nav */
+        .nav {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+            border-color: var(--lc-color);
+        }
+
+        /* Main Scrollable Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            padding: 2rem 2rem 3rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sim-input-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 50px;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            display: flex;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .sim-input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .btn-sim {
+            background: white;
+            color: black;
+            border: none;
+            padding: 0.6rem 2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-sim:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-sim:disabled {
+            opacity: 0.5;
+            background: #444;
+            color: #888;
+            pointer-events: none;
+        }
+
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 5rem;
+        }
+
+        .sim-track {
+            display: flex;
+            flex-direction: column;
+            gap: 3.5rem;
+            position: relative;
+        }
+
+        .connector {
+            position: absolute;
+            left: 50%;
+            top: 40px;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--border) 50%, transparent);
+            z-index: 1;
+            transform: translateX(-50%);
+        }
+
+        .sim-node {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s;
+            backdrop-filter: blur(15px);
+        }
+
+        .sim-node.active {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sim-node h4 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #64748b;
+            margin-bottom: 0.4rem;
+        }
+
+        .sim-node .stage-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.4rem;
+        }
+
+        .sim-node .stage-desc {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .output-box {
+            background: #000;
+            border: 1px solid rgba(110, 231, 183, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #6ee7b7;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(10px);
+            min-height: 45px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s;
+        }
+
+        .data-packet {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: none;
+        }
+
+        .lc-packet {
+            background: var(--lc-color);
+            box-shadow: 0 0 15px var(--lc-color);
+        }
+
+        .li-packet {
+            background: var(--li-color);
+            box-shadow: 0 0 15px var(--li-color);
+        }
+
+        .track-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -1px;
+        }
+
+        .track-header.lc {
+            color: var(--lc-color);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .track-header.li {
+            color: var(--li-color);
+            background: rgba(236, 72, 153, 0.05);
+        }
+
+        /* Custom Scrollbar for Main Content */
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            width: 90%;
+            max-width: 800px;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-title span {
+            color: #64748b;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-item h5 {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item p {
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .terminal-large {
+            background: #000;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #6ee7b7;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 400px;
+            border: 1px solid rgba(110, 231, 183, 0.2);
+        }
+
+        .sim-node {
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .sim-node:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="logo-text" style="font-weight: 800; font-size: 1.1rem; letter-spacing: -1px;">
+            RAG<span style="color: var(--lc-color)">AI</span> LOGIC TRACE
+        </div>
+        <div class="nav-links">
+            <a href="/chat" class="nav-link">Live Chat</a>
+            <a href="/architecture" class="nav-link">Architecture</a>
+            <a href="/" class="nav-link">Home</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="hero">
+            <h1>Parallel Flow Comparison</h1>
+            <p style="color: #64748b; font-size: 0.95rem;">Visualizing how different frameworks process your semantic
+                data</p>
+        </div>
+
+        <div class="sim-input-box">
+            <input type="text" id="sim-text" value="Hi How are u how was your day">
+            <button class="btn-sim" id="start-sim-btn" onclick="triggerSimulation()">▶ Trace Journey</button>
+        </div>
+
+        <div class="sim-grid">
+            <!-- LangChain Track -->
+            <div class="sim-track" id="lc-track">
+                <div class="track-header lc">LangChain <small
+                        style="font-weight: 300; opacity: 0.6; font-size: 0.7rem;">(LINEAR)</small></div>
+                <div class="connector"></div>
+                <div class="data-packet lc-packet" id="lc-packet"></div>
+
+                <div class="sim-node" data-track="langchain" data-step="1" onclick="showStepDetail('langchain', 0)">
+                    <h4>Step 1</h4>
+                    <div class="stage-title">Text Loader</div>
+                    <div class="stage-desc">Receives text as a primitive string object.</div>
+                    <div class="output-box" id="lc-out-1"></div>
+                </div>
+                <div class="sim-node" data-track="langchain" data-step="2" onclick="showStepDetail('langchain', 1)">
+                    <h4>Step 2</h4>
+                    <div class="stage-title">Recursive Splitter</div>
+                    <div class="stage-desc">Applies recursive character splitting.</div>
+                    <div class="output-box" id="lc-out-2"></div>
+                </div>
+                <div class="sim-node" data-track="langchain" data-step="3" onclick="showStepDetail('langchain', 2)">
+                    <h4>Step 3</h4>
+                    <div class="stage-title">Standard Embed</div>
+                    <div class="stage-desc">Generates flat embedding vector.</div>
+                    <div class="output-box" id="lc-out-3"></div>
+                </div>
+                <div class="sim-node" data-track="langchain" data-step="4" onclick="showStepDetail('langchain', 3)">
+                    <h4>Step 4</h4>
+                    <div class="stage-title">Vector Storage</div>
+                    <div class="stage-desc">Persists to vector database.</div>
+                    <div class="output-box" id="lc-out-4"></div>
+                </div>
+            </div>
+
+            <!-- LlamaIndex Track -->
+            <div class="sim-track" id="li-track">
+                <div class="track-header li">LlamaIndex <small
+                        style="font-weight: 300; opacity: 0.6; font-size: 0.7rem;">(INDEX-DRIVEN)</small></div>
+                <div class="connector"></div>
+                <div class="data-packet li-packet" id="li-packet"></div>
+
+                <div class="sim-node" data-track="llamaindex" data-step="1" onclick="showStepDetail('llamaindex', 0)">
+                    <h4>Step 1</h4>
+                    <div class="stage-title">Document Ingestion</div>
+                    <div class="stage-desc">Wraps text in a rich Document object.</div>
+                    <div class="output-box" id="li-out-1"></div>
+                </div>
+                <div class="sim-node" data-track="llamaindex" data-step="2" onclick="showStepDetail('llamaindex', 1)">
+                    <h4>Step 2</h4>
+                    <div class="stage-title">Node Parsing</div>
+                    <div class="stage-desc">Converts Doc to relational nodes.</div>
+                    <div class="output-box" id="li-out-2"></div>
+                </div>
+                <div class="sim-node" data-track="llamaindex" data-step="3" onclick="showStepDetail('llamaindex', 2)">
+                    <h4>Step 3</h4>
+                    <div class="stage-title">Index Relationship</div>
+                    <div class="stage-desc">Builds hierarchical relationships.</div>
+                    <div class="output-box" id="li-out-3"></div>
+                </div>
+                <div class="sim-node" data-track="llamaindex" data-step="4" onclick="showStepDetail('llamaindex', 3)">
+                    <h4>Step 4</h4>
+                    <div class="stage-title">Storage Context</div>
+                    <div class="stage-desc">Persists with full context mapping.</div>
+                    <div class="output-box" id="li-out-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span id="modal-track-label">Framework Trace</span>
+                    <h2 id="modal-step-title">Stage Title</h2>
+                </div>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-item">
+                    <h5>Description</h5>
+                    <p id="modal-step-desc">Detailed explanation of the process.</p>
+                </div>
+                <div class="detail-item">
+                    <h5>Transformed Output</h5>
+                    <div class="terminal-large" id="modal-step-output"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTraceResults = null;
+
+        async function triggerSimulation() {
+            const btn = document.getElementById('start-sim-btn');
+            const inputText = document.getElementById('sim-text').value;
+            btn.disabled = true;
+            btn.innerText = "Tracing Flow...";
+
+            // Reset
+            document.querySelectorAll('.sim-node').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.output-box').forEach(b => {
+                b.style.opacity = '0';
+                b.style.transform = 'translateY(10px)';
+                b.innerHTML = '';
+            });
+
+            try {
+                const response = await fetch('/api/v1/trace-comparison', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: inputText })
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch trace data");
+                currentTraceResults = await response.json();
+
+                const lcPkt = document.getElementById('lc-packet');
+                const liPkt = document.getElementById('li-packet');
+                lcPkt.style.display = 'block';
+                liPkt.style.display = 'block';
+
+                const nodesCount = 4;
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        btn.disabled = false;
+                        btn.innerText = "▶ Trace Journey";
+                    }
+                });
+
+                tl.set([lcPkt, liPkt], { top: "40px", opacity: 1 });
+
+                for (let i = 1; i <= nodesCount; i++) {
+                    const targetNode = document.querySelector(`.sim-node[data-step="${i}"]`);
+                    const targetY = targetNode.offsetTop + targetNode.offsetHeight / 2;
+
+                    tl.to([lcPkt, liPkt], {
+                        top: targetY + "px",
+                        duration: 1.0,
+                        ease: "power2.inOut"
+                    });
+
+                    tl.to([`#lc-track .sim-node[data-step="${i}"]`, `#li-track .sim-node[data-step="${i}"]`], {
+                        className: "sim-node active",
+                        duration: 0.3
+                    }, "-=0.2");
+
+                    tl.to([`#lc-out-${i}`, `#li-out-${i}`], {
+                        opacity: 1,
+                        transform: 'translateY(0)',
+                        duration: 0.4,
+                        onStart: () => {
+                            document.getElementById(`lc-out-${i}`).innerText = currentTraceResults.langchain[i - 1].summary;
+                            document.getElementById(`li-out-${i}`).innerText = currentTraceResults.llamaindex[i - 1].summary;
+                        }
+                    }, ">");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error running simulation: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "▶ Launch Logic Trace";
+            }
+        }
+
+        function showStepDetail(track, stepIndex) {
+            if (!currentTraceResults) {
+                alert("Please run the simulation first to see live data!");
+                return;
+            }
+
+            const stepData = currentTraceResults[track][stepIndex];
+            document.getElementById('modal-track-label').innerText = track === 'langchain' ? 'LangChain Pipeline' : 'LlamaIndex Knowledge Map';
+            document.getElementById('modal-step-title').innerText = stepData.title;
+            document.getElementById('modal-step-desc').innerText = stepData.description;
+            document.getElementById('modal-step-output').innerText = stepData.output;
+
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+        }
+
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+
+</html>
+```

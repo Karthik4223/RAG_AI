@@ -21,6 +21,16 @@
             --ai-msg: #0f172a;
         }
 
+        /* Ensuring UI fits on one screen */
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -100,11 +110,13 @@
         .sidebar {
             width: 320px;
             border-right: 1px solid var(--border);
-            padding: 2rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
             background: rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            scrollbar-width: thin;
         }
 
         .upload-zone {
@@ -353,6 +365,7 @@
         </div>
         <nav class="nav">
             <a href="/chat" class="nav-link active">Live Chat</a>
+            <a href="/comparison" class="nav-link">Engine Comparison</a>
             <a href="/visualize" class="nav-link">Ingestion Trace</a>
             <a href="/visualize-query" class="nav-link">Query Trace</a>
             <a href="/architecture" class="nav-link">Architecture</a>
@@ -380,6 +393,17 @@
                     <li class="doc-item" style="color: var(--subtext); font-style: italic;">No specific documents
                         indexed yet</li>
                 </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Flow Engine</h3>
+                <div
+                    style="display: flex; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 10px; border: 1px solid var(--border);">
+                    <button id="flow-langchain" class="nav-link active"
+                        style="flex: 1; border: none; font-size: 0.7rem;">LangChain</button>
+                    <button id="flow-llamaindex" class="nav-link"
+                        style="flex: 1; border: none; font-size: 0.7rem;">LlamaIndex</button>
+                </div>
             </div>
 
             <div
@@ -428,6 +452,25 @@
         const docList = document.getElementById('doc-list');
 
         let indexedDocs = [];
+        let currentFlow = 'langchain';
+
+        const flowLangChain = document.getElementById('flow-langchain');
+        const flowLlamaIndex = document.getElementById('flow-llamaindex');
+
+        flowLangChain.onclick = () => switchFlow('langchain');
+        flowLlamaIndex.onclick = () => switchFlow('llamaindex');
+
+        function switchFlow(flow) {
+            currentFlow = flow;
+            if (flow === 'langchain') {
+                flowLangChain.classList.add('active');
+                flowLlamaIndex.classList.remove('active');
+            } else {
+                flowLlamaIndex.classList.add('active');
+                flowLangChain.classList.remove('active');
+            }
+            addMessage(`Switched to <strong>${flow === 'langchain' ? 'LangChain' : 'LlamaIndex'}</strong> engine flow.`, 'ai');
+        }
 
         function addMessage(text, role, sources = []) {
             const div = document.createElement('div');
@@ -441,7 +484,8 @@
                 sources.forEach(s => {
                     const p = document.createElement('div');
                     p.className = 'source-pill';
-                    p.innerText = `Relevance: ${Math.round(s.score * 100)}% | ${s.content.substring(0, 60)}...`;
+                    const score = s.score !== undefined ? Math.round(s.score * 100) : 'N/A';
+                    p.innerText = `Relevance: ${score}% | ${s.content.substring(0, 60)}...`;
                     sDiv.appendChild(p);
                 });
                 div.appendChild(sDiv);
@@ -449,6 +493,26 @@
 
             messages.appendChild(div);
             messages.scrollTop = messages.scrollHeight;
+            return div; // Return for potential updates
+        }
+
+        async function showProcessingAnimation(type) {
+            const steps = type === 'ingest' ?
+                ['📄 Tokenizing', '✂️ Semantic Splitting', '🧬 Vectorizing', '🏢 Persisting to DB'] :
+                ['🔍 Vectorizing Query', '🎯 Semantic Search', '📝 assembling Prompt', '✨ Generating Answer'];
+
+            const msgDiv = addMessage(`<em>Initiating ${currentFlow} ${type} engine...</em>`, 'ai');
+            const statusSpan = document.createElement('div');
+            statusSpan.style.fontSize = '0.8rem';
+            statusSpan.style.marginTop = '0.5rem';
+            statusSpan.style.color = 'var(--primary)';
+            msgDiv.appendChild(statusSpan);
+
+            for (const step of steps) {
+                statusSpan.innerHTML = `<strong>Current Op:</strong> ${step}...`;
+                await new Promise(r => setTimeout(r, 600));
+            }
+            return msgDiv;
         }
 
         async function handleSendMessage() {
@@ -461,8 +525,11 @@
             typing.style.display = 'flex';
             messages.scrollTop = messages.scrollHeight;
 
+            const animDiv = await showProcessingAnimation('query');
+
             try {
-                const response = await fetch('/api/v1/query', {
+                const endpoint = currentFlow === 'langchain' ? '/api/v1/query' : '/api/v1/llama-index/query';
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query: query, top_k: 3, threshold: 0.1 })
@@ -470,6 +537,7 @@
 
                 const data = await response.json();
                 typing.style.display = 'none';
+                animDiv.remove(); // Remove animation message
 
                 if (response.ok) {
                     addMessage(data.answer, 'ai', data.sources);
@@ -499,14 +567,18 @@
             formData.append('file', file);
 
             dropZone.innerHTML = `<i>⏳</i><strong>Indexing...</strong><p>${file.name}</p>`;
+            const animDiv = await showProcessingAnimation('ingest');
 
             try {
-                const response = await fetch('/api/v1/upload', {
+                const endpoint = currentFlow === 'langchain' ? '/api/v1/upload' : '/api/v1/llama-index/upload';
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     body: formData
                 });
 
                 const data = await response.json();
+                animDiv.remove();
+
                 if (response.ok) {
                     dropZone.innerHTML = `<i>✅</i><strong>Success!</strong><p>${file.name}</p>`;
                     setTimeout(() => {
