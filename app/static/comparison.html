@@ -26,14 +26,15 @@
 
         html,
         body {
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
-            overflow: hidden;
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Outfit', sans-serif;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         body {
@@ -77,9 +78,6 @@
         /* Main Scrollable Content */
         .main-content {
             flex: 1;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border) transparent;
             padding: 2rem 0;
         }
 
@@ -398,6 +396,7 @@
         <div class="nav-links">
             <a href="/chat" class="nav-link">Live Chat</a>
             <a href="/architecture" class="nav-link">Architecture</a>
+            <a href="/implementation" class="nav-link">Strategy</a>
             <a href="/" class="nav-link">Home</a>
         </div>
     </nav>

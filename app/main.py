@@ -57,6 +57,11 @@ async def get_comparison():
     with open("app/static/comparison.html", "r") as f:
         return f.read()
 
+@app.get("/implementation", response_class=HTMLResponse)
+async def get_implementation():
+    with open("app/static/implementation_flow.html", "r") as f:
+        return f.read()
+
 @app.get("/chat", response_class=HTMLResponse)
 async def get_chat():
     with open("app/static/chat.html", "r") as f:
@@ -81,6 +86,7 @@ async def root():
                 <h1>Explore RAG</h1>
                 <p>Welcome to the production-ready RAG system.</p>
                 <a href="/chat">🚀 Live Semantic Chat</a>
+                <a href="/implementation">🎯 Implementation Strategy (New)</a>
                 <a href="/architecture">🏗️ Architecture Visualization</a>
                 <a href="/comparison">📊 LangChain vs LlamaIndex</a>
                 <a href="/visualize">🧪 Ingestion Trace</a>
